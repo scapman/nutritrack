@@ -1,0 +1,1853 @@
+<!DOCTYPE html>
+<html lang="it" class="h-full bg-slate-950 text-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>NutriTrack AI - Smart Nutrition</title>
+
+  <!-- Configurazione PWA & Android Meta Tags -->
+  <meta name="theme-color" content="#090d16">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50: '#ecfdf5', 500: '#10b981', 600: '#059669', 700: '#047857' },
+            carbs: '#38bdf8',
+            protein: '#f43f5e',
+            fat: '#f59e0b'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Supporto per Safe Areas di Android (notch, pill bar gestuale) */
+    .safe-top { padding-top: env(safe-area-inset-top, 16px); }
+    .safe-bottom { padding-bottom: env(safe-area-inset-bottom, 20px); }
+    ::-webkit-scrollbar { display: none; }
+    * { -webkit-tap-highlight-color: transparent; }
+  </style>
+</head>
+<body class="h-full flex flex-col font-sans select-none overflow-hidden bg-slate-950 text-slate-100">
+
+  <!-- ================= NOTIFICHE TOAST ================= -->
+  <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-[60] transition-all duration-300 opacity-0 pointer-events-none transform -translate-y-4 max-w-[90%] w-auto px-4 py-3 rounded-2xl shadow-2xl backdrop-blur-md text-sm font-medium border flex items-center gap-2">
+    <span id="toast-icon"></span>
+    <span id="toast-message">Notifica</span>
+  </div>
+
+  <!-- ================= TOP APP BAR ================= -->
+  <header class="safe-top px-5 pb-3 pt-3 bg-slate-900/80 backdrop-blur-md border-b border-slate-800/80 flex items-center justify-between sticky top-0 z-20">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+        <svg class="w-5 h-5 text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+      </div>
+      <div>
+        <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-1.5">NutriTrack <span class="text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded-full border border-emerald-500/20">AI v3</span></h1>
+        <p class="text-xs text-slate-400" id="current-date">Oggi</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <button onclick="openStatsModal()" class="w-9 h-9 rounded-xl bg-slate-800/90 hover:bg-slate-700/80 active:scale-95 transition flex items-center justify-center text-slate-300 border border-slate-700/60" aria-label="Statistiche">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+      </button>
+      <button onclick="openSettingsModal()" class="w-9 h-9 rounded-xl bg-slate-800/90 hover:bg-slate-700/80 active:scale-95 transition flex items-center justify-center text-slate-300 border border-slate-700/60" aria-label="Impostazioni">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= CONTENUTO SCORREVOLE ================= -->
+  <main class="flex-1 overflow-y-auto px-4 py-4 space-y-5 pb-28">
+
+    <!-- BANNER INSTALLAZIONE (compare solo se Chrome permette l'installazione) -->
+    <div id="install-banner" class="hidden bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-4 flex items-center justify-between gap-3">
+      <div>
+        <p class="text-xs font-bold text-emerald-200">📲 Installa NutriTrack</p>
+        <p class="text-[11px] text-emerald-300/80">Aggiungila alla schermata Home e usala come un'app.</p>
+      </div>
+      <button onclick="installApp()" class="px-3 py-1.5 bg-emerald-400 text-slate-950 font-bold text-xs rounded-xl shadow active:scale-95 shrink-0">Installa</button>
+    </div>
+
+    <!-- NAVIGAZIONE TRA I GIORNI -->
+    <div class="flex items-center justify-between bg-slate-900/70 border border-slate-800 rounded-2xl px-2 py-1.5">
+      <button onclick="shiftViewDate(-1)" class="w-9 h-9 rounded-xl hover:bg-slate-800 active:scale-90 text-slate-300 text-lg font-bold" aria-label="Giorno precedente">‹</button>
+      <div class="text-center">
+        <p id="view-date-label" class="text-sm font-bold text-white">Oggi</p>
+        <button id="back-to-today-btn" onclick="goToToday()" class="hidden text-[10px] text-emerald-400 font-semibold">Torna a oggi</button>
+      </div>
+      <button id="next-day-btn" onclick="shiftViewDate(1)" class="w-9 h-9 rounded-xl hover:bg-slate-800 active:scale-90 text-slate-300 text-lg font-bold disabled:opacity-20 disabled:pointer-events-none" aria-label="Giorno successivo">›</button>
+    </div>
+
+    <!-- DASHBOARD SUMMARY (Calorie & Macronutrienti) -->
+    <section class="bg-gradient-to-b from-slate-900 to-slate-900/90 rounded-3xl p-5 border border-slate-800 shadow-xl space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <span id="summary-title" class="text-xs uppercase tracking-wider font-semibold text-slate-400">Riepilogo Giornaliero</span>
+          <div class="flex items-baseline gap-2 mt-0.5">
+            <span class="text-3xl font-extrabold text-white tracking-tight" id="consumed-calories">0</span>
+            <span class="text-xs font-medium text-slate-400">/ <span id="target-calories">2000</span> kcal</span>
+          </div>
+        </div>
+        <div class="relative w-16 h-16 flex items-center justify-center">
+          <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+            <path class="text-slate-800" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+            <path id="calorie-progress-circle" class="text-emerald-500 transition-all duration-700 ease-out" stroke-dasharray="0, 100" stroke-width="3.5" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+          </svg>
+          <span class="absolute text-[11px] font-bold text-slate-300" id="calorie-percent">0%</span>
+        </div>
+      </div>
+
+      <!-- Macro Progress Bars -->
+      <div class="grid grid-cols-3 gap-2.5 pt-2 border-t border-slate-800/80">
+        <div class="bg-slate-950/60 rounded-2xl p-3 border border-slate-800/60 flex flex-col justify-between">
+          <div class="flex items-center justify-between text-[11px] font-medium text-carbs">
+            <span>Carbo</span>
+            <span id="carbs-label">0g</span>
+          </div>
+          <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden my-2">
+            <div id="carbs-bar" class="bg-carbs h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+          </div>
+          <span class="text-[10px] text-slate-400 font-medium text-right">target <span id="target-carbs">220</span>g</span>
+        </div>
+
+        <div class="bg-slate-950/60 rounded-2xl p-3 border border-slate-800/60 flex flex-col justify-between">
+          <div class="flex items-center justify-between text-[11px] font-medium text-protein">
+            <span>Proteine</span>
+            <span id="protein-label">0g</span>
+          </div>
+          <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden my-2">
+            <div id="protein-bar" class="bg-protein h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+          </div>
+          <span class="text-[10px] text-slate-400 font-medium text-right">target <span id="target-protein">130</span>g</span>
+        </div>
+
+        <div class="bg-slate-950/60 rounded-2xl p-3 border border-slate-800/60 flex flex-col justify-between">
+          <div class="flex items-center justify-between text-[11px] font-medium text-fat">
+            <span>Grassi</span>
+            <span id="fat-label">0g</span>
+          </div>
+          <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden my-2">
+            <div id="fat-bar" class="bg-fat h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+          </div>
+          <span class="text-[10px] text-slate-400 font-medium text-right">target <span id="target-fat">60</span>g</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- BANNER AVVISO CHIAVI API -->
+    <div id="api-keys-warning" class="hidden bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-amber-400 text-xl">⚠️</span>
+        <div>
+          <p class="text-xs font-bold text-amber-200">Chiave API Mancante</p>
+          <p class="text-[11px] text-amber-300/80">Inserisci la chiave gratuita di Gemini per abilitare la scansione.</p>
+        </div>
+      </div>
+      <button onclick="openSettingsModal()" class="px-3 py-1.5 bg-amber-400 text-slate-950 font-bold text-xs rounded-xl shadow active:scale-95">Configura</button>
+    </div>
+
+    <!-- SEZIONE STORICO DEI PASTI -->
+    <div class="space-y-4">
+      <div class="flex items-center justify-between px-1">
+        <h2 id="diary-title" class="text-sm font-bold text-slate-300 tracking-wide uppercase">Diario Pasti di Oggi</h2>
+        <button onclick="clearViewedDayMeals()" class="text-xs text-rose-400/80 hover:text-rose-400 active:scale-95 transition">Svuota giorno</button>
+      </div>
+      <div class="space-y-3" id="meals-container"></div>
+    </div>
+  </main>
+
+  <!-- ================= BOTTOM BAR ================= -->
+  <nav class="safe-bottom fixed bottom-0 left-0 right-0 bg-slate-900/90 backdrop-blur-xl border-t border-slate-800/80 px-6 py-3 flex items-center justify-around z-30">
+    <button onclick="triggerQuickAction('camera')" class="flex flex-col items-center gap-1 text-slate-400 hover:text-emerald-400 active:scale-90 transition">
+      <div class="w-10 h-10 rounded-2xl bg-slate-800 flex items-center justify-center border border-slate-700/60">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      </div>
+      <span class="text-[10px] font-semibold">Fotocamera</span>
+    </button>
+
+    <button onclick="openScanModal()" class="-mt-7 bg-gradient-to-tr from-emerald-500 to-teal-400 p-4 rounded-3xl text-slate-950 shadow-xl shadow-emerald-500/30 active:scale-90 transition flex items-center justify-center" aria-label="Nuovo pasto">
+      <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+    </button>
+
+    <button onclick="triggerQuickAction('gallery')" class="flex flex-col items-center gap-1 text-slate-400 hover:text-emerald-400 active:scale-90 transition">
+      <div class="w-10 h-10 rounded-2xl bg-slate-800 flex items-center justify-center border border-slate-700/60">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+      </div>
+      <span class="text-[10px] font-semibold">Galleria</span>
+    </button>
+  </nav>
+
+  <!-- Input file nascosti per Fotocamera e Galleria -->
+  <input type="file" id="file-input-camera" accept="image/*" capture="environment" class="hidden" onchange="handleImageSelected(event)">
+  <input type="file" id="file-input-gallery" accept="image/*" class="hidden" onchange="handleImageSelected(event)">
+
+  <!-- ================= MODALE 1: SCANSIONE E PIPELINE AI ================= -->
+  <div id="scan-modal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md hidden flex flex-col justify-end">
+    <div class="bg-slate-900 border-t border-slate-800 rounded-t-[32px] p-6 max-h-[92vh] overflow-y-auto space-y-5">
+      <div class="flex items-center justify-between">
+        <h3 id="scan-modal-title" class="text-lg font-bold text-white">Scansione Pasto con AI</h3>
+        <button onclick="closeScanModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center text-sm font-bold active:scale-90">✕</button>
+      </div>
+
+      <!-- Selezione Tipologia Pasto -->
+      <div>
+        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Categoria Pasto</label>
+        <div class="grid grid-cols-4 gap-2">
+          <button type="button" onclick="selectMealType('colazione')" class="meal-type-btn py-2.5 rounded-2xl text-xs font-bold border transition" data-type="colazione">Colazione</button>
+          <button type="button" onclick="selectMealType('pranzo')" class="meal-type-btn py-2.5 rounded-2xl text-xs font-bold border transition" data-type="pranzo">Pranzo</button>
+          <button type="button" onclick="selectMealType('spuntino')" class="meal-type-btn py-2.5 rounded-2xl text-xs font-bold border transition" data-type="spuntino">Spuntino</button>
+          <button type="button" onclick="selectMealType('cena')" class="meal-type-btn py-2.5 rounded-2xl text-xs font-bold border transition" data-type="cena">Cena</button>
+        </div>
+      </div>
+
+      <!-- PASTI FREQUENTI: aggiunta rapida senza foto e senza API -->
+      <div id="frequent-meals-section" class="hidden">
+        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">⚡ Pasti frequenti (aggiunta rapida)</label>
+        <div id="frequent-meals-list" class="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1"></div>
+      </div>
+
+      <!-- Area Selezione / Anteprima Immagine -->
+      <div id="image-dropzone" class="border-2 border-dashed border-slate-700 rounded-2xl p-4 text-center cursor-pointer relative bg-slate-950/40 min-h-[170px] flex flex-col items-center justify-center overflow-hidden">
+        <img id="image-preview" class="hidden absolute inset-0 w-full h-full object-cover rounded-2xl" alt="Anteprima">
+        <div id="image-placeholder" class="space-y-2">
+          <div class="w-12 h-12 mx-auto rounded-2xl bg-slate-800 text-emerald-400 flex items-center justify-center">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </div>
+          <p class="text-xs font-medium text-slate-300">Tocca per scattare una foto o caricarla</p>
+          <div class="flex justify-center gap-3 pt-1">
+            <button onclick="event.stopPropagation(); triggerQuickAction('camera')" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs rounded-xl border border-slate-700">Fotocamera</button>
+            <button onclick="event.stopPropagation(); triggerQuickAction('gallery')" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs rounded-xl border border-slate-700">Galleria</button>
+          </div>
+        </div>
+        <button id="remove-img-btn" onclick="clearSelectedImage(event)" class="hidden absolute top-2 right-2 bg-slate-900/90 text-white w-7 h-7 rounded-full text-xs font-bold border border-slate-700">✕</button>
+      </div>
+
+      <!-- Note opzionali per migliorare la stima -->
+      <div>
+        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Note (opzionale)</label>
+        <input type="text" id="meal-notes" placeholder="es. pasta integrale, 1 cucchiaio d'olio, porzione abbondante" class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-2.5 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500">
+      </div>
+
+      <!-- STATO AVANZAMENTO PIPELINE A 2 FASI -->
+      <div id="pipeline-status" class="hidden space-y-3 p-4 bg-slate-950/70 rounded-2xl border border-slate-800">
+        <div class="flex items-center gap-3">
+          <div id="step-1-icon" class="w-5 h-5 shrink-0"></div>
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-bold text-white flex items-center justify-between gap-2">
+              <span>Fase 1: Gemini Vision</span>
+              <span id="step-1-badge" class="text-[10px] font-medium truncate"></span>
+            </p>
+            <p class="text-[11px] text-slate-400">Riconoscimento cibo e stima grammature in JSON</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 pt-2 border-t border-slate-900">
+          <div id="step-2-icon" class="w-5 h-5 shrink-0"></div>
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-bold text-white flex items-center justify-between gap-2">
+              <span>Fase 2: Gemini Nutrizionista</span>
+              <span id="step-2-badge" class="text-[10px] font-medium truncate"></span>
+            </p>
+            <p class="text-[11px] text-slate-400">Calcolo nutrizionale di precisione per grammi</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANNELLO ERRORE DETTAGLIATO (resta visibile, non scompare come il toast) -->
+      <div id="pipeline-error" class="hidden p-4 bg-rose-500/10 border border-rose-500/40 rounded-2xl space-y-1">
+        <p class="text-xs font-bold text-rose-300">Dettaglio errore</p>
+        <p id="pipeline-error-text" class="text-[11px] text-rose-200 break-words select-text font-mono"></p>
+      </div>
+
+      <!-- RISULTATO ANALISI -->
+      <div id="analysis-result" class="hidden space-y-3 bg-slate-950/80 p-4 rounded-2xl border border-slate-800">
+        <h4 class="text-xs font-bold text-emerald-400 uppercase tracking-wide">Risultato Analisi Nutrizionale</h4>
+        <div>
+          <label class="text-[10px] text-slate-500 block mb-1">Piatto riconosciuto (modificabile)</label>
+          <input type="text" id="result-dish-name" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-emerald-500">
+        </div>
+        <p class="text-[10px] text-slate-500">Puoi correggere i grammi: calorie e macro si ricalcolano subito, senza nuove richieste. <span class="text-sky-300">DB</span> = dal database locale, <span class="text-emerald-300">AI</span> = calcolato ora da Gemini.</p>
+        <div id="result-items-list" class="space-y-1.5 text-xs"></div>
+        <div class="pt-2 border-t border-slate-800 flex justify-between items-center text-xs font-bold text-white">
+          <span>Totale Stimato</span>
+          <span id="result-total-macros">0 kcal</span>
+        </div>
+      </div>
+
+      <!-- Bottoni Azione -->
+      <div class="space-y-2 pt-2">
+        <button id="start-analysis-btn" onclick="executeNutritionPipeline()" class="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-extrabold rounded-2xl shadow-lg shadow-emerald-500/20 active:scale-95 transition disabled:opacity-50 disabled:pointer-events-none">
+          Analizza con Pipeline AI
+        </button>
+        <button id="save-meal-btn" onclick="saveAnalyzedMeal()" class="hidden w-full py-3.5 bg-emerald-500 text-slate-950 font-extrabold rounded-2xl shadow-lg active:scale-95 transition">
+          Salva nel Diario
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODALE 2: IMPOSTAZIONI & API KEYS ================= -->
+  <div id="settings-modal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md hidden flex flex-col justify-end">
+    <div class="bg-slate-900 border-t border-slate-800 rounded-t-[32px] p-6 max-h-[92vh] overflow-y-auto space-y-5">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-bold text-white">Impostazioni & Chiave API</h3>
+        <button onclick="closeSettingsModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center text-sm font-bold active:scale-90">✕</button>
+      </div>
+
+      <div class="space-y-4">
+        <!-- Gemini Key -->
+        <div class="space-y-1">
+          <label class="block text-xs font-semibold text-slate-300">Chiave API Gemini (Google AI Studio)</label>
+          <div class="relative">
+            <input type="password" id="input-gemini-key" placeholder="AIzaSy..." autocomplete="off" class="w-full bg-slate-950 border border-slate-800 rounded-2xl pl-4 pr-16 py-2.5 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500">
+            <button type="button" onclick="togglePasswordVisibility('input-gemini-key')" class="absolute right-3 top-2.5 text-xs text-slate-500">Mostra</button>
+          </div>
+        </div>
+
+        <!-- Modello (avanzato) -->
+        <div class="pt-3 border-t border-slate-800 space-y-3">
+          <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Modello AI (avanzato)</h4>
+          <p class="text-[10px] text-slate-500">Lascia vuoto per la selezione automatica: l'app interroga Google e sceglie il modello Gemini più recente disponibile per la tua chiave. Gemini esegue entrambe le fasi della pipeline (visione + calcolo nutrizionale) con il piano gratuito.</p>
+          <div>
+            <label class="text-[11px] text-slate-400 block mb-1">Modello Gemini</label>
+            <input type="text" id="input-gemini-model" placeholder="auto" autocomplete="off" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500">
+          </div>
+          <button type="button" id="test-keys-btn" onclick="testApiKeys()" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-2xl border border-slate-700 active:scale-95 transition disabled:opacity-50">
+            🔍 Verifica chiave e modello
+          </button>
+          <div id="test-keys-result" class="hidden text-[11px] p-3 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-1 break-words select-text"></div>
+        </div>
+
+        <!-- Backup -->
+        <div class="pt-3 border-t border-slate-800 space-y-2">
+          <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Backup Dati</h4>
+          <p class="text-[10px] text-slate-500">Esporta storico pasti, obiettivi e database alimenti in un file JSON (la chiave API non viene inclusa). Importalo su un altro telefono o dopo aver cancellato i dati del browser.</p>
+          <div class="grid grid-cols-2 gap-2.5">
+            <button type="button" onclick="exportBackup()" class="py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-2xl border border-slate-700 active:scale-95">⬇️ Esporta</button>
+            <button type="button" onclick="document.getElementById('import-file-input').click()" class="py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-2xl border border-slate-700 active:scale-95">⬆️ Importa</button>
+          </div>
+          <input type="file" id="import-file-input" accept="application/json,.json" class="hidden" onchange="importBackup(event)">
+        </div>
+
+        <!-- Database alimenti locale -->
+        <div class="pt-3 border-t border-slate-800 space-y-2">
+          <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Database Alimenti Locale</h4>
+          <p class="text-[10px] text-slate-500">I valori per 100 g di ogni alimento calcolato vengono salvati sul telefono e riutilizzati nelle scansioni successive, senza consumare richieste API.</p>
+          <div class="flex items-center justify-between bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-2.5">
+            <span class="text-xs text-slate-300"><b id="food-db-count" class="text-emerald-400">0</b> alimenti memorizzati</span>
+            <button type="button" onclick="clearFoodDb()" class="text-xs text-rose-400/80 hover:text-rose-400 active:scale-95">Svuota</button>
+          </div>
+        </div>
+
+        <!-- Obiettivi Giornalieri -->
+        <div class="pt-3 border-t border-slate-800 space-y-3">
+          <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Obiettivi Nutrizionali Giornalieri</h4>
+          <div class="grid grid-cols-2 gap-2.5">
+            <div>
+              <label class="text-[11px] text-slate-400 block mb-1">Calorie (kcal)</label>
+              <input type="number" id="input-target-calories" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+            </div>
+            <div>
+              <label class="text-[11px] text-carbs block mb-1">Carboidrati (g)</label>
+              <input type="number" id="input-target-carbs" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+            </div>
+            <div>
+              <label class="text-[11px] text-protein block mb-1">Proteine (g)</label>
+              <input type="number" id="input-target-protein" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+            </div>
+            <div>
+              <label class="text-[11px] text-fat block mb-1">Grassi (g)</label>
+              <input type="number" id="input-target-fat" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+            </div>
+          </div>
+        </div>
+
+        <div class="p-3 bg-slate-950/50 rounded-2xl border border-slate-800/80 text-[11px] text-slate-400 space-y-1">
+          <p class="font-semibold text-slate-300">🔒 Sicurezza e Privacy Locale</p>
+          <p>La chiave è salvata unicamente nel <code class="text-emerald-400">LocalStorage</code> del tuo dispositivo e inviata solo direttamente a Google.</p>
+        </div>
+
+        <button onclick="saveSettings()" class="w-full py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold rounded-2xl shadow-lg active:scale-95 transition">
+          Salva Impostazioni
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODALE 3: STATISTICHE ================= -->
+  <div id="stats-modal" class="fixed inset-0 z-50 bg-slate-950 hidden flex flex-col">
+    <div class="safe-top px-5 pt-3 pb-3 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between">
+      <h3 class="text-lg font-bold text-white">📊 Statistiche</h3>
+      <button onclick="closeStatsModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center text-sm font-bold active:scale-90">✕</button>
+    </div>
+    <div class="flex-1 overflow-y-auto px-4 py-4 space-y-4 safe-bottom">
+      <!-- Selettore periodo -->
+      <div class="grid grid-cols-3 gap-2">
+        <button type="button" class="stats-range-btn py-2 rounded-2xl text-xs font-bold border" data-range="7" onclick="setStatsRange(7)">7 giorni</button>
+        <button type="button" class="stats-range-btn py-2 rounded-2xl text-xs font-bold border" data-range="30" onclick="setStatsRange(30)">30 giorni</button>
+        <button type="button" class="stats-range-btn py-2 rounded-2xl text-xs font-bold border" data-range="90" onclick="setStatsRange(90)">90 giorni</button>
+      </div>
+      <div id="stats-content" class="space-y-4"></div>
+    </div>
+  </div>
+
+  <!-- ================= JAVASCRIPT LOGIC ================= -->
+  <script>
+    /* ==============================================================
+       STATO DELL'APPLICAZIONE (LocalStorage Persistente)
+    ============================================================== */
+    const STORAGE_KEYS = {
+      GEMINI_KEY: 'nutritrack_gemini_key',
+      GEMINI_MODEL: 'nutritrack_gemini_model',
+      TARGETS: 'nutritrack_targets',
+      MEALS: 'nutritrack_meals_history'
+    };
+    const CACHE_KEYS = {
+      GEMINI_MODELS: 'nutritrack_cache_gemini_models'
+    };
+
+    const GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta';
+
+    function safeJsonParse(str, fallback) {
+      try { return JSON.parse(str) ?? fallback; } catch (e) { return fallback; }
+    }
+
+    // Rimuove eventuali chiavi Claude salvate dalle versioni precedenti
+    localStorage.removeItem('nutritrack_claude_key');
+    localStorage.removeItem('nutritrack_claude_model');
+
+    let appState = {
+      geminiKey: localStorage.getItem(STORAGE_KEYS.GEMINI_KEY) || '',
+      geminiModel: localStorage.getItem(STORAGE_KEYS.GEMINI_MODEL) || '',
+      targets: safeJsonParse(localStorage.getItem(STORAGE_KEYS.TARGETS), { calories: 2000, carbs: 220, protein: 130, fat: 60 }),
+      meals: safeJsonParse(localStorage.getItem(STORAGE_KEYS.MEALS), [])
+    };
+
+    let currentScanState = {
+      mealType: 'colazione',
+      imageBase64: null,
+      imageMimeType: 'image/jpeg',
+      geminiResult: null,
+      nutritionResult: null
+    };
+
+    const MEAL_CATEGORIES = [
+      { id: 'colazione', label: 'Colazione', icon: '☕' },
+      { id: 'pranzo', label: 'Pranzo', icon: '🥗' },
+      { id: 'spuntino', label: 'Spuntino', icon: '🍎' },
+      { id: 'cena', label: 'Cena', icon: '🍲' }
+    ];
+
+    /* ==============================================================
+       INIZIALIZZAZIONE
+    ============================================================== */
+    document.addEventListener('DOMContentLoaded', () => {
+      updateDateDisplay();
+      applyTargetsToUI();
+      selectMealType(guessMealTypeByTime());
+      renderDashboardAndMeals();
+      checkApiKeys();
+      resetPipelineUI();
+
+      document.getElementById('image-dropzone').addEventListener('click', () => {
+        if (!currentScanState.imageBase64) triggerQuickAction('camera');
+      });
+    });
+
+    function guessMealTypeByTime() {
+      const h = new Date().getHours();
+      if (h >= 5 && h < 11) return 'colazione';
+      if (h >= 11 && h < 15) return 'pranzo';
+      if (h >= 15 && h < 18) return 'spuntino';
+      return 'cena';
+    }
+
+    /* Data locale (non UTC!) per evitare che i pasti dopo mezzanotte finiscano nel giorno sbagliato */
+    function localDateKey(d = new Date()) {
+      const x = new Date(d);
+      return `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, '0')}-${String(x.getDate()).padStart(2, '0')}`;
+    }
+
+    function updateDateDisplay() {
+      const formatted = new Date().toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'short' });
+      document.getElementById('current-date').textContent = formatted.charAt(0).toUpperCase() + formatted.slice(1);
+    }
+
+    function checkApiKeys() {
+      document.getElementById('api-keys-warning').classList.toggle('hidden', !!appState.geminiKey);
+    }
+
+    /* ==============================================================
+       GESTIONE IMMAGINI (compressione Canvas)
+    ============================================================== */
+    function triggerQuickAction(type) {
+      document.getElementById(type === 'camera' ? 'file-input-camera' : 'file-input-gallery').click();
+    }
+
+    function handleImageSelected(event) {
+      const file = event.target.files[0];
+      event.target.value = '';
+      if (!file) return;
+
+      if (navigator.vibrate) navigator.vibrate(30);
+      openScanModal();
+      resetPipelineUI();
+
+      const objectUrl = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const maxDim = 768; // Gemini elabora le immagini a ~768px: più grande = solo più lento
+          let width = img.naturalWidth;
+          let height = img.naturalHeight;
+          if (width > maxDim || height > maxDim) {
+            const ratio = Math.min(maxDim / width, maxDim / height);
+            width = Math.round(width * ratio);
+            height = Math.round(height * ratio);
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#ffffff'; // sfondo bianco per PNG trasparenti
+          ctx.fillRect(0, 0, width, height);
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+          const base64 = dataUrl.split(',')[1];
+          if (!base64 || base64.length < 100) throw new Error('Conversione immagine fallita');
+
+          currentScanState.imageBase64 = base64;
+          currentScanState.imageMimeType = 'image/jpeg';
+
+          const preview = document.getElementById('image-preview');
+          preview.src = dataUrl;
+          preview.classList.remove('hidden');
+          document.getElementById('image-placeholder').classList.add('hidden');
+          document.getElementById('remove-img-btn').classList.remove('hidden');
+          showToast(`Immagine pronta (${Math.round(base64.length * 0.75 / 1024)} KB)`, 'success');
+        } catch (err) {
+          showToast('Errore elaborazione immagine: ' + err.message, 'error');
+        } finally {
+          URL.revokeObjectURL(objectUrl);
+        }
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(objectUrl);
+        showToast('Formato immagine non supportato dal browser (es. HEIC). Usa JPG o PNG.', 'error');
+      };
+      img.src = objectUrl;
+    }
+
+    function clearSelectedImage(event) {
+      if (event) event.stopPropagation();
+      currentScanState.imageBase64 = null;
+      const preview = document.getElementById('image-preview');
+      preview.removeAttribute('src');
+      preview.classList.add('hidden');
+      document.getElementById('image-placeholder').classList.remove('hidden');
+      document.getElementById('remove-img-btn').classList.add('hidden');
+      resetPipelineUI();
+    }
+
+    /* ==============================================================
+       UTILITÀ DI RETE & PARSING ROBUSTO
+    ============================================================== */
+    class ApiError extends Error {
+      constructor(message, status, retryable) {
+        super(message);
+        this.status = status;
+        this.retryable = retryable;
+      }
+    }
+
+    async function fetchWithTimeout(url, options = {}, ms = 60000) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), ms);
+      try {
+        return await fetch(url, { ...options, signal: controller.signal });
+      } catch (err) {
+        if (err.name === 'AbortError') throw new ApiError(`Timeout: nessuna risposta entro ${ms / 1000} secondi.`, 0, true);
+        throw new ApiError(`Errore di rete (${err.message}). Controlla la connessione internet o eventuali ad-blocker/VPN.`, 0, false);
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+
+    async function buildApiError(resp, provider) {
+      let detail = '';
+      try {
+        const body = await resp.text();
+        const j = safeJsonParse(body, null);
+        detail = j?.error?.message || body.slice(0, 300) || resp.statusText;
+      } catch (e) {
+        detail = resp.statusText;
+      }
+      const s = resp.status;
+      let hint = '';
+      let retryable = [404, 429, 500, 502, 503, 504].includes(s);
+
+      if (/api key/i.test(detail) && (s === 400 || s === 403)) {
+        hint = 'Chiave API Gemini non valida: ricopiala da aistudio.google.com (senza spazi).';
+        retryable = false;
+      } else if (s === 400) {
+        hint = 'Richiesta rifiutata dal modello.';
+        retryable = true; // proviamo un altro modello
+      } else if (s === 403) {
+        hint = 'Accesso negato: chiave senza permessi o servizio non disponibile nel tuo paese/progetto.';
+      } else if (s === 404) {
+        hint = 'Modello non disponibile per questa chiave.';
+      } else if (s === 429) {
+        hint = 'Quota gratuita esaurita o troppe richieste: attendi un minuto e riprova.';
+      } else if (s >= 500) {
+        hint = 'Server Google sovraccarico, riprova tra poco.';
+      }
+      return new ApiError(`${provider} HTTP ${s}: ${hint ? hint + ' — ' : ''}${detail}`, s, retryable);
+    }
+
+    /* Estrae JSON anche se il modello aggiunge markdown o testo extra */
+    function extractJson(text) {
+      const s = String(text || '').replace(/```(?:json)?/gi, '').trim();
+      try { return JSON.parse(s); } catch (e) { /* continua */ }
+      const start = s.indexOf('{');
+      const end = s.lastIndexOf('}');
+      if (start !== -1 && end > start) {
+        try { return JSON.parse(s.slice(start, end + 1)); } catch (e) { /* continua */ }
+      }
+      throw new Error('La risposta non è un JSON valido: ' + s.slice(0, 200));
+    }
+
+    function num(v) {
+      const n = parseFloat(String(v ?? '').replace(',', '.'));
+      return Number.isFinite(n) ? n : 0;
+    }
+    function round1(v) { return Math.round(num(v) * 10) / 10; }
+
+    /* ==============================================================
+       SELEZIONE AUTOMATICA DEI MODELLI
+       Evita errori 404 quando un modello viene ritirato da Google
+    ============================================================== */
+    async function getGeminiCandidates(forceRefresh = false) {
+      if (appState.geminiModel) return [appState.geminiModel.replace(/^models\//, '')];
+
+      if (!forceRefresh) {
+        const cached = safeJsonParse(sessionStorage.getItem(CACHE_KEYS.GEMINI_MODELS), null);
+        if (Array.isArray(cached) && cached.length) return cached;
+      }
+
+      const resp = await fetchWithTimeout(`${GEMINI_BASE}/models?pageSize=1000`, {
+        headers: { 'x-goog-api-key': appState.geminiKey }
+      }, 20000);
+      if (!resp.ok) throw await buildApiError(resp, 'Gemini');
+      const data = await resp.json();
+
+      const EXCLUDE = /(embed|tts|image|imagen|veo|live|audio|native|aqa|robotics|computer-use|learnlm|gemma|nano|banana)/i;
+      const names = (data.models || [])
+        .filter(m => (m.supportedGenerationMethods || []).includes('generateContent'))
+        .map(m => String(m.name || '').replace(/^models\//, ''))
+        .filter(n => n.startsWith('gemini-') && !EXCLUDE.test(n));
+
+      const info = n => ({
+        version: parseFloat((n.match(/gemini-(\d+(?:\.\d+)?)/) || [])[1] || '0'),
+        unstable: /(preview|exp|experimental)/i.test(n) ? 1 : 0,
+        tier: /flash-lite/i.test(n) ? 1 : /flash/i.test(n) ? 2 : /pro/i.test(n) ? 0 : -1,
+        dated: /-\d{3}$|-\d{2}-\d{2,4}$/.test(n) ? 1 : 0
+      });
+
+      // Priorità: stabile > famiglia Flash (veloce, quota gratuita ampia) > versione più alta > Flash prima di Lite > alias senza data
+      names.sort((a, b) => {
+        const A = info(a), B = info(b);
+        return (A.unstable - B.unstable)
+          || ((B.tier >= 1) - (A.tier >= 1))
+          || (B.version - A.version)
+          || (B.tier - A.tier)
+          || (A.dated - B.dated);
+      });
+
+      const list = names.length ? names.slice(0, 5) : ['gemini-flash-latest', 'gemini-2.5-flash'];
+      sessionStorage.setItem(CACHE_KEYS.GEMINI_MODELS, JSON.stringify(list));
+      return list;
+    }
+
+    /* ==============================================================
+       DATABASE LOCALE ALIMENTI (valori nutrizionali per 100 g)
+       Ogni alimento calcolato da Gemini viene memorizzato sul telefono:
+       alle scansioni successive i cibi già noti vengono calcolati in locale,
+       senza chiamate API (più veloce, zero quota consumata, valori coerenti).
+    ============================================================== */
+    const FOOD_DB_KEY = 'nutritrack_food_db';
+    let foodDb = safeJsonParse(localStorage.getItem(FOOD_DB_KEY), {});
+
+    function foodKey(name) {
+      return String(name || '')
+        .toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9 ]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function lookupFood(name) {
+      return foodDb[foodKey(name)] || null;
+    }
+
+    function storeFood(entry) {
+      const key = foodKey(entry.name);
+      if (!key) return;
+      foodDb[key] = { ...entry, updated: Date.now() };
+      try {
+        localStorage.setItem(FOOD_DB_KEY, JSON.stringify(foodDb));
+      } catch (e) {
+        console.warn('Database alimenti pieno:', e);
+      }
+    }
+
+    function updateFoodDbInfo() {
+      const el = document.getElementById('food-db-count');
+      if (el) el.textContent = Object.keys(foodDb).length;
+    }
+
+    function clearFoodDb() {
+      if (!confirm('Svuotare il database locale degli alimenti? I pasti salvati nel diario non verranno toccati.')) return;
+      foodDb = {};
+      localStorage.removeItem(FOOD_DB_KEY);
+      updateFoodDbInfo();
+      showToast('Database alimenti svuotato', 'info');
+    }
+
+    function computeItem(name, weight_g, per100, source) {
+      const f = num(weight_g) / 100;
+      return {
+        name,
+        weight_g: Math.round(num(weight_g)),
+        source,
+        per100,
+        calories: Math.round(per100.kcal_100g * f),
+        carbs_g: round1(per100.carbs_100g * f),
+        protein_g: round1(per100.protein_100g * f),
+        fat_g: round1(per100.fat_100g * f)
+      };
+    }
+
+    function sumTotals(items) {
+      return items.reduce((t, i) => ({
+        calories: t.calories + i.calories,
+        carbs_g: round1(t.carbs_g + i.carbs_g),
+        protein_g: round1(t.protein_g + i.protein_g),
+        fat_g: round1(t.fat_g + i.fat_g)
+      }), { calories: 0, carbs_g: 0, protein_g: 0, fat_g: 0 });
+    }
+
+    /* ==============================================================
+       CHIAMATA GEMINI GENERICA
+       - "thinking" ridotto al minimo: è la causa principale dei timeout
+       - timeout per singolo modello, poi passa automaticamente al successivo
+       - contatore dei secondi visibile durante l'attesa
+    ============================================================== */
+    function thinkingConfigFor(model) {
+      if (/gemini-2\.5-flash/i.test(model)) return { thinkingBudget: 0 };
+      if (/gemini-[3-9]/i.test(model)) return { thinkingLevel: 'low' };
+      return null;
+    }
+
+    function startStepTimer(n, model) {
+      const t0 = Date.now();
+      setStep(n, 'running', `${model} · 0s`);
+      const badge = document.getElementById(`step-${n}-badge`);
+      const id = setInterval(() => {
+        badge.textContent = `${model} · ${Math.round((Date.now() - t0) / 1000)}s`;
+      }, 1000);
+      return () => clearInterval(id);
+    }
+
+    /* ==============================================================
+       MEMORIA DELLE PRESTAZIONI DEI MODELLI
+       L'app impara quali modelli rispondono velocemente con la tua chiave:
+       - modello andato in timeout / errore server -> messo in fondo per 24 ore
+       - modelli che hanno risposto -> ordinati per tempo medio di risposta
+       Così il tempo perso su un modello lento si paga una sola volta.
+    ============================================================== */
+    const MODEL_STATS_KEY = 'nutritrack_model_stats';
+    const SLOW_PENALTY_MS = 24 * 60 * 60 * 1000;
+    let modelStats = safeJsonParse(localStorage.getItem(MODEL_STATS_KEY), {});
+
+    function recordModelResult(model, ok, elapsedMs) {
+      const s = modelStats[model] || {};
+      if (ok) {
+        s.avgMs = s.avgMs ? Math.round(s.avgMs * 0.6 + elapsedMs * 0.4) : elapsedMs;
+        s.lastOk = Date.now();
+        s.slowUntil = 0;
+      } else {
+        s.slowUntil = Date.now() + SLOW_PENALTY_MS;
+        s.fails = (s.fails || 0) + 1;
+      }
+      modelStats[model] = s;
+      try { localStorage.setItem(MODEL_STATS_KEY, JSON.stringify(modelStats)); } catch (e) { /* ignora */ }
+    }
+
+    function isPenalized(model) {
+      return (modelStats[model]?.slowUntil || 0) > Date.now();
+    }
+
+    function orderBySpeed(list) {
+      const rank = m => {
+        if (isPenalized(m)) return 2;           // lento di recente: ultimo
+        if (modelStats[m]?.avgMs) return 0;     // già provato e veloce: primo
+        return 1;                               // mai provato: in mezzo
+      };
+      return list
+        .map((m, i) => ({ m, i }))
+        .sort((a, b) => (rank(a.m) - rank(b.m))
+          || ((modelStats[a.m]?.avgMs || 0) - (modelStats[b.m]?.avgMs || 0))
+          || (a.i - b.i))
+        .map(x => x.m);
+    }
+
+    function resetModelStats() {
+      modelStats = {};
+      localStorage.removeItem(MODEL_STATS_KEY);
+      showToast('Statistiche modelli azzerate', 'info');
+      testApiKeys();
+    }
+
+    async function callGemini(parts, stepNumber, temperature, timeoutMs = 60000) {
+      const candidates = orderBySpeed(await getGeminiCandidates()).slice(0, 3);
+      let lastError = null;
+
+      for (const model of candidates) {
+        let thinking = thinkingConfigFor(model);
+
+        for (let attempt = 0; attempt < 2; attempt++) {
+          const generationConfig = { temperature, responseMimeType: 'application/json' };
+          if (thinking) generationConfig.thinkingConfig = thinking;
+
+          const stopTimer = startStepTimer(stepNumber, model);
+          const tStart = Date.now();
+          let resp;
+          try {
+            resp = await fetchWithTimeout(`${GEMINI_BASE}/models/${encodeURIComponent(model)}:generateContent`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'x-goog-api-key': appState.geminiKey },
+              body: JSON.stringify({ contents: [{ role: 'user', parts }], generationConfig })
+            }, timeoutMs);
+          } catch (err) {
+            stopTimer();
+            err.message = `[${model}] ${err.message}`;
+            lastError = err;
+            console.warn(err.message);
+            if (err.retryable) recordModelResult(model, false); // timeout: modello segnato come lento
+            if (err.retryable && !appState.geminiModel) break; // prova il modello successivo
+            throw err;
+          }
+          stopTimer();
+
+          if (!resp.ok) {
+            const apiErr = await buildApiError(resp, 'Gemini');
+            apiErr.message = `[${model}] ${apiErr.message}`;
+            lastError = apiErr;
+            console.warn(apiErr.message);
+            // Il modello non accetta il parametro "thinking": riprova lo stesso modello senza
+            if (resp.status === 400 && thinking && /think/i.test(apiErr.message)) {
+              thinking = null;
+              continue;
+            }
+            if (apiErr.retryable && resp.status !== 429) recordModelResult(model, false);
+            if (apiErr.retryable && !appState.geminiModel) break;
+            throw apiErr;
+          }
+
+          const data = await resp.json();
+          if (data.promptFeedback?.blockReason) {
+            throw new Error(`Gemini ha bloccato la richiesta (motivo: ${data.promptFeedback.blockReason}).`);
+          }
+          const cand = data.candidates?.[0];
+          const text = (cand?.content?.parts || [])
+            .filter(p => typeof p.text === 'string' && !p.thought)
+            .map(p => p.text)
+            .join('');
+          if (!text) {
+            throw new Error(`Gemini non ha restituito testo (finishReason: ${cand?.finishReason || 'sconosciuto'}).`);
+          }
+          const json = extractJson(text);
+          recordModelResult(model, true, Date.now() - tStart);
+          return { model, json };
+        }
+      }
+
+      throw lastError || new Error('Nessun modello Gemini utilizzabile.');
+    }
+
+    /* ==============================================================
+       FASE 1: GEMINI VISION (immagine -> nome piatto + alimenti con pesi)
+    ============================================================== */
+    async function runVisionPhase(notes) {
+      const prompt = `Sei un nutrizionista e chef esperto. Analizza l'immagine di cibo.
+1. Dai un nome al piatto complessivo in italiano (es. "Spaghetti alla carbonara", "Insalata di pollo").
+2. Identifica TUTTI gli alimenti/ingredienti presenti, inclusi condimenti visibili (olio, salse, formaggio).
+3. Stima il peso in grammi di ciascuno usando come riferimento piatti, posate e contenitori.
+Usa nomi GENERICI e STANDARDIZZATI in italiano, indicando lo stato quando rilevante (es. "Pasta di semola cotta", "Petto di pollo alla griglia", "Olio extravergine di oliva"), senza marche né aggettivi superflui.
+${notes ? `Note dell'utente (tienine conto): "${notes}"` : ''}
+Se non c'è cibo restituisci "foods": [].
+Rispondi SOLO con JSON valido:
+{"dish_name":"Nome del piatto","foods":[{"name":"Nome alimento","weight_g":150}]}`;
+
+      const { model, json } = await callGemini([
+        { text: prompt },
+        { inlineData: { mimeType: currentScanState.imageMimeType, data: currentScanState.imageBase64 } }
+      ], 1, 0.2, 45000);
+
+      const rawFoods = Array.isArray(json) ? json : (json.foods || json.items || json.alimenti || []);
+      const foods = rawFoods
+        .map(f => ({
+          name: String(f.name || f.nome || f.food || 'Alimento').trim(),
+          weight_g: Math.round(num(f.weight_g ?? f.weight ?? f.grams ?? f.peso_g ?? f.peso))
+        }))
+        .filter(f => f.name && f.weight_g > 0);
+
+      if (!foods.length) throw new Error('Nessun alimento riconosciuto nella foto. Prova con una foto più ravvicinata e ben illuminata.');
+      const dishName = String(json.dish_name || json.piatto || '').trim() || foods.map(f => f.name).slice(0, 2).join(' e ');
+      return { model, dishName, foods };
+    }
+
+    /* ==============================================================
+       FASE 2: CALCOLO NUTRIZIONALE
+       1) alimenti già nel database locale -> calcolo istantaneo offline
+       2) alimenti nuovi -> Gemini restituisce i valori per 100 g, che vengono salvati
+    ============================================================== */
+    async function runNutritionPhase(foods) {
+      const unknownMap = new Map();
+      foods.forEach(f => {
+        if (!lookupFood(f.name)) unknownMap.set(foodKey(f.name), f.name);
+      });
+      const unknown = [...unknownMap.values()];
+      let model = null;
+
+      if (unknown.length) {
+        const prompt = `Sei un nutrizionista clinico. Per ciascuno di questi alimenti fornisci i valori nutrizionali medi PER 100 GRAMMI (riferimento: tabelle CREA/USDA, nello stato indicato dal nome):
+${JSON.stringify(unknown)}
+Mantieni il campo "name" IDENTICO a quello fornito e lo stesso ordine.
+Rispondi SOLO con JSON valido:
+{"foods":[{"name":"Nome","kcal_100g":131,"carbs_100g":25,"protein_100g":5,"fat_100g":1.1}]}`;
+
+        const res = await callGemini([{ text: prompt }], 2, 0.1, 40000);
+        model = res.model;
+        const list = Array.isArray(res.json) ? res.json : (res.json.foods || res.json.items || []);
+
+        unknown.forEach((name, idx) => {
+          const match = list.find(x => foodKey(x.name) === foodKey(name)) || list[idx];
+          if (!match) return;
+          storeFood({
+            name,
+            kcal_100g: round1(match.kcal_100g ?? match.calories_100g ?? match.kcal),
+            carbs_100g: round1(match.carbs_100g ?? match.carbs),
+            protein_100g: round1(match.protein_100g ?? match.protein),
+            fat_100g: round1(match.fat_100g ?? match.fat),
+            source: res.model
+          });
+        });
+      }
+
+      const items = foods.map(f => {
+        const per100 = lookupFood(f.name);
+        if (!per100) throw new Error(`Valori nutrizionali non trovati per "${f.name}". Riprova l'analisi.`);
+        return computeItem(f.name, f.weight_g, per100, unknownMap.has(foodKey(f.name)) ? 'ai' : 'db');
+      });
+
+      return {
+        model,
+        items,
+        totals: sumTotals(items),
+        fromDb: items.filter(i => i.source === 'db').length,
+        fromAi: items.filter(i => i.source === 'ai').length
+      };
+    }
+
+    /* ==============================================================
+       ORCHESTRAZIONE PIPELINE
+    ============================================================== */
+    async function executeNutritionPipeline() {
+      if (!appState.geminiKey) {
+        showToast('Configura prima la chiave API Gemini nelle Impostazioni', 'error');
+        openSettingsModal();
+        return;
+      }
+      if (!currentScanState.imageBase64) {
+        showToast('Scatta o seleziona prima una foto del cibo', 'error');
+        return;
+      }
+
+      const startBtn = document.getElementById('start-analysis-btn');
+      startBtn.disabled = true;
+      document.getElementById('pipeline-status').classList.remove('hidden');
+      document.getElementById('analysis-result').classList.add('hidden');
+      document.getElementById('save-meal-btn').classList.add('hidden');
+      hidePipelineError();
+      setStep(1, 'running', 'Avvio...');
+      setStep(2, 'idle', 'In attesa...');
+      if (navigator.vibrate) navigator.vibrate([40, 60, 40]);
+
+      let phase = 1;
+      try {
+        // FASE 1: visione -> nome piatto + pesi
+        const vision = await runVisionPhase(document.getElementById('meal-notes').value.trim());
+        currentScanState.geminiResult = vision.foods;
+        setStep(1, 'done', `✓ ${vision.foods.length} alimenti · ${vision.model}`);
+
+        // FASE 2: pesi -> calorie e macro (database locale + Gemini per i nuovi)
+        phase = 2;
+        setStep(2, 'running', 'Ricerca nel database locale...');
+        const nutrition = await runNutritionPhase(vision.foods);
+        currentScanState.nutritionResult = {
+          dishName: vision.dishName,
+          items: nutrition.items,
+          totals: nutrition.totals
+        };
+        setStep(2, 'done', nutrition.fromAi === 0
+          ? '✓ Tutto dal database locale (0 richieste)'
+          : `✓ ${nutrition.fromDb} da DB · ${nutrition.fromAi} da ${nutrition.model}`);
+
+        displayAnalysisResults();
+        document.getElementById('save-meal-btn').classList.remove('hidden');
+        showToast('Analisi completata!', 'success');
+        if (navigator.vibrate) navigator.vibrate(100);
+      } catch (err) {
+        console.error('Pipeline Error:', err);
+        sessionStorage.removeItem(CACHE_KEYS.GEMINI_MODELS);
+        setStep(phase, 'error', 'Errore');
+        if (phase === 1) setStep(2, 'idle', 'Interrotto');
+        showPipelineError(err.message);
+        showToast(`Errore nella fase ${phase}`, 'error');
+      } finally {
+        startBtn.disabled = false;
+      }
+    }
+
+    function setStep(n, state, text) {
+      const icon = document.getElementById(`step-${n}-icon`);
+      const badge = document.getElementById(`step-${n}-badge`);
+      badge.textContent = text || '';
+      badge.title = text || '';
+      icon.innerHTML = '';
+      switch (state) {
+        case 'running':
+          icon.className = 'w-5 h-5 shrink-0 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin';
+          badge.className = 'text-[10px] font-medium truncate text-amber-400';
+          break;
+        case 'done':
+          icon.className = 'w-5 h-5 shrink-0 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs font-bold';
+          icon.textContent = '✓';
+          badge.className = 'text-[10px] font-bold truncate text-emerald-400';
+          break;
+        case 'error':
+          icon.className = 'w-5 h-5 shrink-0 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center text-xs font-bold';
+          icon.textContent = '!';
+          badge.className = 'text-[10px] font-bold truncate text-rose-400';
+          break;
+        default:
+          icon.className = 'w-5 h-5 shrink-0 border-2 border-slate-600 rounded-full';
+          badge.className = 'text-[10px] font-medium truncate text-slate-500';
+      }
+    }
+
+    function showPipelineError(msg) {
+      document.getElementById('pipeline-error-text').textContent = msg;
+      document.getElementById('pipeline-error').classList.remove('hidden');
+    }
+    function hidePipelineError() {
+      document.getElementById('pipeline-error').classList.add('hidden');
+      document.getElementById('pipeline-error-text').textContent = '';
+    }
+
+    /* Risultato con nome del piatto e grammi modificabili (ricalcolo istantaneo, senza API) */
+    function displayAnalysisResults() {
+      const data = currentScanState.nutritionResult;
+      document.getElementById('result-dish-name').value = data.dishName || '';
+
+      const container = document.getElementById('result-items-list');
+      container.innerHTML = '';
+      data.items.forEach((item, idx) => {
+        const row = document.createElement('div');
+        row.className = 'flex items-center justify-between gap-2 py-1.5 border-b border-slate-900';
+        row.innerHTML = `
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center gap-1.5">
+              <span class="font-medium text-slate-200 truncate">${escapeHtml(item.name)}</span>
+              <span class="text-[9px] px-1 rounded ${item.source === 'db' ? 'bg-sky-500/15 text-sky-300' : 'bg-emerald-500/15 text-emerald-300'}">${item.source === 'db' ? 'DB' : 'AI'}</span>
+            </div>
+            <div class="text-slate-500 text-[10px]">C:${item.carbs_g} P:${item.protein_g} G:${item.fat_g}</div>
+          </div>
+          <div class="flex items-center gap-1 shrink-0">
+            <input type="number" inputmode="numeric" min="0" value="${item.weight_g}" onchange="updateResultWeight(${idx}, this.value)"
+              class="w-16 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-[11px] text-white text-right focus:outline-none focus:border-emerald-500">
+            <span class="text-[10px] text-slate-500">g</span>
+          </div>
+          <span class="w-14 text-right text-emerald-400 font-semibold text-[11px] shrink-0">${item.calories} kcal</span>`;
+        container.appendChild(row);
+      });
+
+      const t = data.totals;
+      document.getElementById('result-total-macros').innerHTML = `
+        <span class="text-emerald-400">${t.calories} kcal</span> |
+        <span class="text-carbs">C:${t.carbs_g}g</span>
+        <span class="text-protein">P:${t.protein_g}g</span>
+        <span class="text-fat">G:${t.fat_g}g</span>`;
+      document.getElementById('analysis-result').classList.remove('hidden');
+    }
+
+    function updateResultWeight(idx, value) {
+      const data = currentScanState.nutritionResult;
+      if (!data || !data.items[idx]) return;
+      const old = data.items[idx];
+      data.items[idx] = computeItem(old.name, Math.max(0, num(value)), old.per100, old.source);
+      data.totals = sumTotals(data.items);
+      displayAnalysisResults();
+    }
+
+    /* Salva il pasto analizzato nel giorno visualizzato (oggi o un giorno passato) */
+    function saveAnalyzedMeal() {
+      const data = currentScanState.nutritionResult;
+      if (!data) return;
+      const items = data.items
+        .filter(i => i.weight_g > 0)
+        .map(({ name, weight_g, calories, carbs_g, protein_g, fat_g }) => ({ name, weight_g, calories, carbs_g, protein_g, fat_g }));
+      if (!items.length) {
+        showToast('Nessun alimento con peso maggiore di 0', 'error');
+        return;
+      }
+      addMealRecord({
+        type: currentScanState.mealType,
+        dayKey: viewDate,
+        dishName: document.getElementById('result-dish-name').value.trim() || data.dishName || '',
+        items
+      });
+      closeScanModal();
+      showToast(viewDate === localDateKey() ? 'Pasto salvato nel diario!' : `Pasto salvato in: ${formatDayLabel(viewDate)}`, 'success');
+      if (navigator.vibrate) navigator.vibrate(50);
+    }
+
+    /* Crea e salva un pasto: data = giorno scelto + ora attuale */
+    function addMealRecord({ type, dayKey, dishName, items }) {
+      const now = new Date();
+      const d = dayKeyToDate(dayKey);
+      d.setHours(now.getHours(), now.getMinutes(), now.getSeconds());
+      const cleanItems = items.map(i => ({
+        name: i.name, weight_g: i.weight_g, calories: i.calories,
+        carbs_g: i.carbs_g, protein_g: i.protein_g, fat_g: i.fat_g
+      }));
+      appState.meals.push({
+        id: 'meal_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
+        type,
+        date: d.toISOString(),
+        dayKey,
+        dishName: dishName || '',
+        items: cleanItems,
+        totals: sumTotals(cleanItems)
+      });
+      persistMeals();
+      renderDashboardAndMeals();
+    }
+
+    function persistMeals() {
+      try {
+        localStorage.setItem(STORAGE_KEYS.MEALS, JSON.stringify(appState.meals));
+      } catch (e) {
+        showToast('Memoria locale piena: esporta un backup e svuota i giorni vecchi.', 'error');
+      }
+    }
+
+    function mealDayKey(m) {
+      return m.dayKey || (m.date ? localDateKey(m.date) : '');
+    }
+
+    function mealTitle(m) {
+      return m.dishName || (m.items || []).map(i => i.name).join(', ') || 'Pasto';
+    }
+
+    /* ==============================================================
+       NAVIGAZIONE TRA I GIORNI
+    ============================================================== */
+    let viewDate = localDateKey();
+
+    function dayKeyToDate(key) {
+      const [y, m, d] = String(key).split('-').map(Number);
+      return new Date(y, m - 1, d);
+    }
+
+    function formatDayLabel(key, long = false) {
+      const today = localDateKey();
+      const y = new Date(); y.setDate(y.getDate() - 1);
+      if (key === today) return 'Oggi';
+      if (key === localDateKey(y)) return 'Ieri';
+      const s = dayKeyToDate(key).toLocaleDateString('it-IT', long
+        ? { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }
+        : { weekday: 'short', day: 'numeric', month: 'short' });
+      return s.charAt(0).toUpperCase() + s.slice(1);
+    }
+
+    function shiftViewDate(delta) {
+      const d = dayKeyToDate(viewDate);
+      d.setDate(d.getDate() + delta);
+      const key = localDateKey(d);
+      if (key > localDateKey()) return; // niente giorni futuri
+      viewDate = key;
+      renderDashboardAndMeals();
+      if (navigator.vibrate) navigator.vibrate(10);
+    }
+
+    function goToToday() {
+      viewDate = localDateKey();
+      renderDashboardAndMeals();
+    }
+
+    function updateViewDateUI() {
+      const isToday = viewDate === localDateKey();
+      const label = formatDayLabel(viewDate);
+      document.getElementById('view-date-label').textContent = isToday ? 'Oggi' : formatDayLabel(viewDate, true);
+      document.getElementById('back-to-today-btn').classList.toggle('hidden', isToday);
+      document.getElementById('next-day-btn').disabled = isToday;
+      document.getElementById('summary-title').textContent = isToday ? 'Riepilogo Giornaliero' : `Riepilogo · ${label}`;
+      document.getElementById('diary-title').textContent = isToday ? 'Diario Pasti di Oggi' : `Diario · ${label}`;
+    }
+
+    /* ==============================================================
+       RENDERING DIARIO & DASHBOARD (giorno visualizzato)
+    ============================================================== */
+    function renderDashboardAndMeals() {
+      updateViewDateUI();
+      const dayMeals = appState.meals.filter(m => mealDayKey(m) === viewDate);
+
+      const tot = dayMeals.reduce((t, m) => ({
+        cal: t.cal + num(m.totals?.calories),
+        carbs: t.carbs + num(m.totals?.carbs_g),
+        protein: t.protein + num(m.totals?.protein_g),
+        fat: t.fat + num(m.totals?.fat_g)
+      }), { cal: 0, carbs: 0, protein: 0, fat: 0 });
+
+      document.getElementById('consumed-calories').textContent = Math.round(tot.cal);
+      const rawPercent = appState.targets.calories > 0 ? Math.round((tot.cal / appState.targets.calories) * 100) : 0;
+      document.getElementById('calorie-percent').textContent = `${rawPercent}%`;
+
+      const circle = document.getElementById('calorie-progress-circle');
+      circle.setAttribute('stroke-dasharray', `${Math.min(rawPercent, 100)}, 100`);
+      circle.classList.toggle('text-rose-500', rawPercent > 100);
+      circle.classList.toggle('text-emerald-500', rawPercent <= 100);
+
+      updateMacroBar('carbs', tot.carbs, appState.targets.carbs);
+      updateMacroBar('protein', tot.protein, appState.targets.protein);
+      updateMacroBar('fat', tot.fat, appState.targets.fat);
+
+      const isToday = viewDate === localDateKey();
+      const container = document.getElementById('meals-container');
+      container.innerHTML = '';
+
+      MEAL_CATEGORIES.forEach(cat => {
+        const catMeals = dayMeals.filter(m => m.type === cat.id).sort((a, b) => new Date(a.date) - new Date(b.date));
+        const catCalories = Math.round(catMeals.reduce((acc, m) => acc + num(m.totals?.calories), 0));
+
+        let itemsHtml;
+        if (!catMeals.length) {
+          itemsHtml = `<p class="text-[11px] text-slate-500 italic py-1">Nessun alimento registrato</p>`;
+        } else {
+          itemsHtml = catMeals.map(meal => {
+            const timeStr = new Date(meal.date).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+            const names = (meal.items || []).map(i => `${i.name} (${i.weight_g}g)`).join(', ');
+            const title = meal.dishName || names;
+            return `
+              <div class="flex items-center justify-between py-2 border-t border-slate-800/60 first:border-0 text-xs">
+                <div class="pr-2 flex-1 min-w-0">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[10px] text-slate-400 font-mono shrink-0">${timeStr}</span>
+                    <span class="font-semibold text-slate-100 truncate">${escapeHtml(title)}</span>
+                  </div>
+                  ${meal.dishName ? `<div class="text-[10px] text-slate-500 truncate">${escapeHtml(names)}</div>` : ''}
+                  <div class="text-[10px] text-slate-400 flex gap-2 mt-0.5">
+                    <span>${Math.round(num(meal.totals?.calories))} kcal</span>
+                    <span class="text-carbs">C: ${round1(meal.totals?.carbs_g)}g</span>
+                    <span class="text-protein">P: ${round1(meal.totals?.protein_g)}g</span>
+                    <span class="text-fat">G: ${round1(meal.totals?.fat_g)}g</span>
+                  </div>
+                </div>
+                <button onclick="repeatMeal('${meal.id}')" class="text-slate-500 hover:text-emerald-400 p-1 text-sm active:scale-90" title="${isToday ? 'Aggiungi di nuovo' : 'Aggiungi a oggi'}">↻</button>
+                <button onclick="deleteMeal('${meal.id}')" class="text-slate-600 hover:text-rose-400 p-1 text-sm active:scale-90" title="Elimina">✕</button>
+              </div>`;
+          }).join('');
+        }
+
+        const card = document.createElement('div');
+        card.className = 'bg-slate-900/70 border border-slate-800/80 rounded-2xl p-4';
+        card.innerHTML = `
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2">
+              <span class="text-lg">${cat.icon}</span>
+              <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wide">${cat.label}</h3>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold ${catCalories > 0 ? 'text-emerald-400' : 'text-slate-500'}">${catCalories} kcal</span>
+              <button onclick="quickAddMealForType('${cat.id}')" class="w-6 h-6 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-300 text-xs font-bold active:scale-90">+</button>
+            </div>
+          </div>
+          <div class="space-y-1">${itemsHtml}</div>`;
+        container.appendChild(card);
+      });
+    }
+
+    function updateMacroBar(macro, current, target) {
+      document.getElementById(`${macro}-label`).textContent = `${Math.round(current)}g`;
+      const percent = target > 0 ? Math.min(Math.round((current / target) * 100), 100) : 0;
+      document.getElementById(`${macro}-bar`).style.width = `${percent}%`;
+    }
+
+    function deleteMeal(id) {
+      appState.meals = appState.meals.filter(m => m.id !== id);
+      persistMeals();
+      renderDashboardAndMeals();
+      showToast('Pasto rimosso', 'info');
+      if (navigator.vibrate) navigator.vibrate(25);
+    }
+
+    /* Ripete un pasto: se si sta guardando un giorno passato, lo aggiunge a OGGI */
+    function repeatMeal(id) {
+      const meal = appState.meals.find(m => m.id === id);
+      if (!meal) return;
+      const today = localDateKey();
+      addMealRecord({ type: meal.type, dayKey: today, dishName: meal.dishName, items: meal.items || [] });
+      showToast(`"${mealTitle(meal)}" aggiunto a oggi`, 'success');
+      if (navigator.vibrate) navigator.vibrate(30);
+    }
+
+    function clearViewedDayMeals() {
+      const label = formatDayLabel(viewDate).toLowerCase();
+      if (!confirm(`Sei sicuro di voler svuotare il diario di ${label}?`)) return;
+      appState.meals = appState.meals.filter(m => mealDayKey(m) !== viewDate);
+      persistMeals();
+      renderDashboardAndMeals();
+      showToast('Diario del giorno svuotato', 'info');
+    }
+
+    function quickAddMealForType(type) {
+      selectMealType(type);
+      openScanModal();
+    }
+
+    /* ==============================================================
+       PASTI FREQUENTI (aggiunta rapida, zero chiamate API)
+    ============================================================== */
+    function getFrequentMeals(limit = 10) {
+      const groups = new Map();
+      appState.meals.forEach(m => {
+        const key = foodKey(mealTitle(m));
+        if (!key) return;
+        const g = groups.get(key) || { count: 0, latest: m };
+        g.count++;
+        if (new Date(m.date) > new Date(g.latest.date)) g.latest = m;
+        groups.set(key, g);
+      });
+      return [...groups.values()]
+        .sort((a, b) => (b.count - a.count) || (new Date(b.latest.date) - new Date(a.latest.date)))
+        .slice(0, limit);
+    }
+
+    function renderFrequentMeals() {
+      const list = getFrequentMeals();
+      const section = document.getElementById('frequent-meals-section');
+      const container = document.getElementById('frequent-meals-list');
+      section.classList.toggle('hidden', list.length === 0);
+      container.innerHTML = list.map(g => `
+        <button type="button" onclick="addFrequentMeal('${g.latest.id}')"
+          class="shrink-0 max-w-[160px] text-left bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-2xl px-3 py-2 active:scale-95 transition">
+          <p class="text-[11px] font-bold text-slate-100 truncate">${escapeHtml(mealTitle(g.latest))}</p>
+          <p class="text-[10px] text-slate-400">${Math.round(num(g.latest.totals?.calories))} kcal · ${g.count}×</p>
+        </button>`).join('');
+    }
+
+    function addFrequentMeal(id) {
+      const meal = appState.meals.find(m => m.id === id);
+      if (!meal) return;
+      addMealRecord({ type: currentScanState.mealType, dayKey: viewDate, dishName: meal.dishName, items: meal.items || [] });
+      closeScanModal();
+      const cat = MEAL_CATEGORIES.find(c => c.id === currentScanState.mealType);
+      showToast(`"${mealTitle(meal)}" aggiunto a ${cat ? cat.label : 'diario'}`, 'success');
+      if (navigator.vibrate) navigator.vibrate(30);
+    }
+
+    /* ==============================================================
+       STATISTICHE STORICHE
+    ============================================================== */
+    let statsRange = 7;
+
+    function openStatsModal() {
+      document.getElementById('stats-modal').classList.remove('hidden');
+      setStatsRange(statsRange);
+    }
+
+    function closeStatsModal() {
+      document.getElementById('stats-modal').classList.add('hidden');
+    }
+
+    function setStatsRange(n) {
+      statsRange = n;
+      document.querySelectorAll('.stats-range-btn').forEach(btn => {
+        const active = Number(btn.dataset.range) === n;
+        btn.className = 'stats-range-btn py-2 rounded-2xl text-xs font-bold border ' +
+          (active ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400' : 'bg-slate-800 border-slate-700 text-slate-300');
+      });
+      renderStats();
+    }
+
+    function statCard(title, inner) {
+      return `<section class="bg-slate-900/70 border border-slate-800 rounded-3xl p-4 space-y-3">
+        <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">${title}</h4>${inner}</section>`;
+    }
+
+    function renderStats() {
+      const out = document.getElementById('stats-content');
+      const T = appState.targets;
+
+      // Costruzione dei giorni del periodo (dal più vecchio a oggi)
+      const days = [];
+      for (let i = statsRange - 1; i >= 0; i--) {
+        const d = new Date(); d.setDate(d.getDate() - i);
+        days.push(localDateKey(d));
+      }
+      const byDay = {};
+      appState.meals.forEach(m => {
+        const k = mealDayKey(m);
+        (byDay[k] = byDay[k] || []).push(m);
+      });
+      const dayStats = days.map(k => {
+        const meals = byDay[k] || [];
+        const s = { key: k, meals, cal: 0, carbs: 0, protein: 0, fat: 0 };
+        meals.forEach(m => {
+          s.cal += num(m.totals?.calories); s.carbs += num(m.totals?.carbs_g);
+          s.protein += num(m.totals?.protein_g); s.fat += num(m.totals?.fat_g);
+        });
+        return s;
+      });
+      const logged = dayStats.filter(d => d.meals.length);
+
+      if (!logged.length) {
+        out.innerHTML = `<div class="text-center py-16 space-y-2">
+          <p class="text-4xl">📭</p>
+          <p class="text-sm text-slate-300 font-semibold">Nessun pasto registrato in questo periodo</p>
+          <p class="text-xs text-slate-500">Scansiona i tuoi pasti per vedere qui andamenti e medie.</p></div>`;
+        return;
+      }
+
+      const n = logged.length;
+      const avg = {
+        cal: logged.reduce((a, d) => a + d.cal, 0) / n,
+        carbs: logged.reduce((a, d) => a + d.carbs, 0) / n,
+        protein: logged.reduce((a, d) => a + d.protein, 0) / n,
+        fat: logged.reduce((a, d) => a + d.fat, 0) / n
+      };
+      const inTarget = logged.filter(d => d.cal >= T.calories * 0.9 && d.cal <= T.calories * 1.1).length;
+      const over = logged.filter(d => d.cal > T.calories * 1.1).length;
+      const under = n - inTarget - over;
+
+      // Serie di giorni consecutivi registrati fino a oggi
+      let streak = 0;
+      for (let i = 0; ; i++) {
+        const d = new Date(); d.setDate(d.getDate() - i);
+        if ((byDay[localDateKey(d)] || []).length) streak++;
+        else if (i === 0) continue; // oggi non ancora registrato: non interrompe la serie
+        else break;
+        if (i > 3650) break;
+      }
+
+      let html = '';
+
+      // --- Riepilogo rapido
+      html += `<div class="grid grid-cols-3 gap-2.5">
+        <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-3 text-center">
+          <p class="text-xl font-extrabold text-white">${Math.round(avg.cal)}</p><p class="text-[10px] text-slate-400">kcal medie/giorno</p></div>
+        <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-3 text-center">
+          <p class="text-xl font-extrabold text-emerald-400">${Math.round(inTarget / n * 100)}%</p><p class="text-[10px] text-slate-400">giorni in obiettivo</p></div>
+        <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-3 text-center">
+          <p class="text-xl font-extrabold text-amber-400">${streak}🔥</p><p class="text-[10px] text-slate-400">giorni di fila</p></div>
+      </div>`;
+
+      // --- Grafico calorie giornaliere con linea obiettivo
+      const maxVal = Math.max(T.calories * 1.25, ...dayStats.map(d => d.cal), 1);
+      const targetPos = (T.calories / maxVal) * 100;
+      const labelEvery = statsRange <= 7 ? 1 : statsRange <= 30 ? 5 : 15;
+      const bars = dayStats.map((d, i) => {
+        const h = d.cal > 0 ? Math.max(2, (d.cal / maxVal) * 100) : 0;
+        const color = d.cal === 0 ? 'bg-slate-800' : d.cal > T.calories * 1.1 ? 'bg-rose-500' : d.cal >= T.calories * 0.9 ? 'bg-emerald-500' : 'bg-sky-500';
+        const dt = dayKeyToDate(d.key);
+        const lbl = statsRange <= 7
+          ? dt.toLocaleDateString('it-IT', { weekday: 'narrow' }).toUpperCase()
+          : ((statsRange - 1 - i) % labelEvery === 0 ? String(dt.getDate()) : '');
+        return `<div class="flex-1 flex flex-col items-center h-full min-w-0" title="${d.key}: ${Math.round(d.cal)} kcal">
+          <div class="flex-1 w-full flex items-end"><div class="w-full ${color} rounded-t-sm" style="height:${h}%"></div></div>
+          <span class="text-[8px] text-slate-500 h-3 leading-3 mt-1 whitespace-nowrap">${lbl}</span></div>`;
+      }).join('');
+      html += statCard(`Calorie giornaliere · ultimi ${statsRange} giorni`, `
+        <div class="relative h-44">
+          <div class="absolute left-0 right-0 top-0 pointer-events-none z-10" style="bottom:16px">
+            <div class="absolute left-0 right-0 border-t border-dashed border-amber-400/80" style="bottom:${targetPos}%">
+              <span class="absolute right-0 -top-4 text-[9px] text-amber-400 font-bold bg-slate-900/80 px-1 rounded">obiettivo ${T.calories}</span>
+            </div>
+          </div>
+          <div class="flex ${statsRange > 30 ? 'gap-px' : 'gap-1'} h-full">${bars}</div>
+        </div>
+        <div class="flex flex-wrap gap-3 text-[10px] text-slate-400">
+          <span><span class="inline-block w-2 h-2 rounded-sm bg-emerald-500"></span> in obiettivo (±10%): ${inTarget}</span>
+          <span><span class="inline-block w-2 h-2 rounded-sm bg-sky-500"></span> sotto: ${under}</span>
+          <span><span class="inline-block w-2 h-2 rounded-sm bg-rose-500"></span> sopra: ${over}</span>
+        </div>`);
+
+      // --- Medie macronutrienti vs obiettivo
+      const macroRow = (label, val, target, cls) => {
+        const pct = target > 0 ? Math.round(val / target * 100) : 0;
+        return `<div><div class="flex justify-between text-[11px] mb-1"><span class="${cls} font-semibold">${label}</span>
+          <span class="text-slate-300">${Math.round(val)}g <span class="text-slate-500">/ ${target}g (${pct}%)</span></span></div>
+          <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden"><div class="h-full rounded-full ${cls.replace('text-', 'bg-')}" style="width:${Math.min(pct, 100)}%"></div></div></div>`;
+      };
+      html += statCard('Media macronutrienti giornaliera', `<div class="space-y-3">
+        ${macroRow('Carboidrati', avg.carbs, T.carbs, 'text-carbs')}
+        ${macroRow('Proteine', avg.protein, T.protein, 'text-protein')}
+        ${macroRow('Grassi', avg.fat, T.fat, 'text-fat')}</div>`);
+
+      // --- Ripartizione energetica dei macro (kcal da C, P, G)
+      const eC = avg.carbs * 4, eP = avg.protein * 4, eF = avg.fat * 9, eT = eC + eP + eF || 1;
+      const pC = Math.round(eC / eT * 100), pP = Math.round(eP / eT * 100), pF = Math.max(0, 100 - pC - pP);
+      html += statCard('Da dove arrivano le calorie', `
+        <div class="flex h-4 rounded-full overflow-hidden">
+          <div class="bg-carbs" style="width:${pC}%"></div><div class="bg-protein" style="width:${pP}%"></div><div class="bg-fat" style="width:${pF}%"></div>
+        </div>
+        <div class="flex justify-between text-[11px]">
+          <span class="text-carbs">Carbo ${pC}%</span><span class="text-protein">Proteine ${pP}%</span><span class="text-fat">Grassi ${pF}%</span>
+        </div>`);
+
+      // --- Ripartizione per tipo di pasto
+      const periodMeals = logged.flatMap(d => d.meals);
+      const catCal = {};
+      MEAL_CATEGORIES.forEach(c => { catCal[c.id] = 0; });
+      periodMeals.forEach(m => { catCal[m.type] = (catCal[m.type] || 0) + num(m.totals?.calories); });
+      const catTotal = Object.values(catCal).reduce((a, b) => a + b, 0) || 1;
+      const catColors = { colazione: 'bg-amber-400', pranzo: 'bg-emerald-500', spuntino: 'bg-fuchsia-500', cena: 'bg-indigo-500' };
+      html += statCard('Calorie per tipo di pasto', `
+        <div class="flex h-4 rounded-full overflow-hidden">
+          ${MEAL_CATEGORIES.map(c => `<div class="${catColors[c.id]}" style="width:${catCal[c.id] / catTotal * 100}%"></div>`).join('')}
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          ${MEAL_CATEGORIES.map(c => `<div class="flex items-center justify-between bg-slate-950/50 rounded-xl px-3 py-2 text-[11px]">
+            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm ${catColors[c.id]}"></span>${c.icon} ${c.label}</span>
+            <span class="text-slate-300 font-semibold">${Math.round(catCal[c.id] / catTotal * 100)}% · ${Math.round(catCal[c.id] / n)} kcal</span></div>`).join('')}
+        </div>
+        <p class="text-[10px] text-slate-500">kcal = media per giorno registrato</p>`);
+
+      // --- Piatti più frequenti
+      const dishMap = new Map();
+      periodMeals.forEach(m => {
+        const k = foodKey(mealTitle(m));
+        const g = dishMap.get(k) || { name: mealTitle(m), count: 0, cal: 0 };
+        g.count++; g.cal += num(m.totals?.calories);
+        dishMap.set(k, g);
+      });
+      const topDishes = [...dishMap.values()].sort((a, b) => b.count - a.count).slice(0, 5);
+      html += statCard('Piatti più frequenti', `<div class="space-y-1.5">
+        ${topDishes.map((d, i) => `<div class="flex items-center justify-between text-xs py-1 border-b border-slate-800/60 last:border-0">
+          <span class="truncate pr-2"><span class="text-slate-500 mr-1">${i + 1}.</span>${escapeHtml(d.name)}</span>
+          <span class="shrink-0 text-slate-400">${d.count}× · ~${Math.round(d.cal / d.count)} kcal</span></div>`).join('')}</div>`);
+
+      // --- Alimenti più consumati
+      const foodMap = new Map();
+      periodMeals.forEach(m => (m.items || []).forEach(it => {
+        const k = foodKey(it.name);
+        const g = foodMap.get(k) || { name: it.name, count: 0, grams: 0 };
+        g.count++; g.grams += num(it.weight_g);
+        foodMap.set(k, g);
+      }));
+      const topFoods = [...foodMap.values()].sort((a, b) => b.count - a.count).slice(0, 8);
+      html += statCard('Alimenti più consumati', `<div class="flex flex-wrap gap-1.5">
+        ${topFoods.map(f => `<span class="text-[11px] bg-slate-800 border border-slate-700 rounded-full px-2.5 py-1 text-slate-200">${escapeHtml(f.name)} <span class="text-slate-500">${f.count}× · ${Math.round(f.grams / 1000 * 10) / 10} kg</span></span>`).join('')}</div>`);
+
+      html += `<p class="text-center text-[10px] text-slate-600 pb-4">Medie calcolate su ${n} giorni con almeno un pasto registrato.</p>`;
+      out.innerHTML = html;
+    }
+
+    /* ==============================================================
+       BACKUP: ESPORTA / IMPORTA (JSON)
+    ============================================================== */
+    function exportBackup() {
+      const payload = {
+        app: 'NutriTrack',
+        version: 3,
+        exportedAt: new Date().toISOString(),
+        targets: appState.targets,
+        meals: appState.meals,
+        foodDb
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `nutritrack-backup-${localDateKey()}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 3000);
+      showToast(`Backup esportato (${appState.meals.length} pasti)`, 'success');
+    }
+
+    async function importBackup(event) {
+      const file = event.target.files[0];
+      event.target.value = '';
+      if (!file) return;
+      try {
+        const data = JSON.parse(await file.text());
+        if (data.app !== 'NutriTrack' || !Array.isArray(data.meals)) throw new Error('File non valido: non è un backup di NutriTrack.');
+
+        // Unione senza duplicati (per id)
+        const existing = new Set(appState.meals.map(m => m.id));
+        const newMeals = data.meals.filter(m => m && m.id && !existing.has(m.id));
+        appState.meals = appState.meals.concat(newMeals);
+        persistMeals();
+
+        let foodsAdded = 0;
+        if (data.foodDb && typeof data.foodDb === 'object') {
+          Object.entries(data.foodDb).forEach(([k, v]) => {
+            if (!foodDb[k]) { foodDb[k] = v; foodsAdded++; }
+          });
+          try { localStorage.setItem(FOOD_DB_KEY, JSON.stringify(foodDb)); } catch (e) { /* ignora */ }
+        }
+
+        if (data.targets && confirm('Il backup contiene anche gli obiettivi nutrizionali. Vuoi sostituire quelli attuali?')) {
+          appState.targets = { ...appState.targets, ...data.targets };
+          localStorage.setItem(STORAGE_KEYS.TARGETS, JSON.stringify(appState.targets));
+          applyTargetsToUI();
+          openSettingsModal(); // aggiorna i campi visibili
+        }
+
+        updateFoodDbInfo();
+        renderDashboardAndMeals();
+        showToast(`Importati ${newMeals.length} pasti e ${foodsAdded} alimenti`, 'success');
+      } catch (err) {
+        showToast('Importazione fallita: ' + err.message, 'error');
+      }
+    }
+
+    /* ==============================================================
+       PWA: SERVICE WORKER (offline) + PULSANTE "INSTALLA APP"
+    ============================================================== */
+    let deferredInstallPrompt = null;
+
+    if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(err => console.warn('Service worker non registrato:', err));
+      });
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      document.getElementById('install-banner')?.classList.remove('hidden');
+    });
+
+    window.addEventListener('appinstalled', () => {
+      deferredInstallPrompt = null;
+      document.getElementById('install-banner')?.classList.add('hidden');
+      showToast('App installata nella schermata Home!', 'success');
+    });
+
+    async function installApp() {
+      if (!deferredInstallPrompt) {
+        showToast('Usa il menu ⋮ di Chrome → "Aggiungi a schermata Home"', 'info');
+        return;
+      }
+      deferredInstallPrompt.prompt();
+      await deferredInstallPrompt.userChoice;
+      deferredInstallPrompt = null;
+      document.getElementById('install-banner')?.classList.add('hidden');
+    }
+
+    /* Se l'app resta aperta oltre la mezzanotte, la vista "Oggi" passa al nuovo giorno */
+    let lastKnownToday = localDateKey();
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState !== 'visible') return;
+      const today = localDateKey();
+      if (today !== lastKnownToday) {
+        if (viewDate === lastKnownToday) viewDate = today;
+        lastKnownToday = today;
+        updateDateDisplay();
+        renderDashboardAndMeals();
+      }
+    });
+    /* ==============================================================
+       MODALI & IMPOSTAZIONI
+    ============================================================== */
+    function openScanModal() {
+      const isToday = viewDate === localDateKey();
+      document.getElementById('scan-modal-title').textContent = isToday ? 'Scansione Pasto con AI' : `Aggiungi pasto · ${formatDayLabel(viewDate)}`;
+      renderFrequentMeals();
+      document.getElementById('scan-modal').classList.remove('hidden');
+    }
+
+    function closeScanModal() {
+      document.getElementById('scan-modal').classList.add('hidden');
+      document.getElementById('meal-notes').value = '';
+      currentScanState.geminiResult = null;
+      currentScanState.nutritionResult = null;
+      clearSelectedImage();
+    }
+
+    function selectMealType(type) {
+      currentScanState.mealType = type;
+      document.querySelectorAll('.meal-type-btn').forEach(btn => {
+        const active = btn.dataset.type === type;
+        btn.className = 'meal-type-btn py-2.5 rounded-2xl text-xs font-bold border transition ' +
+          (active ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400' : 'bg-slate-800 border-slate-700 text-slate-300');
+      });
+    }
+
+    function resetPipelineUI() {
+      document.getElementById('pipeline-status').classList.add('hidden');
+      document.getElementById('analysis-result').classList.add('hidden');
+      document.getElementById('save-meal-btn').classList.add('hidden');
+      document.getElementById('start-analysis-btn').disabled = false;
+      hidePipelineError();
+      setStep(1, 'idle', 'In attesa...');
+      setStep(2, 'idle', 'In attesa...');
+    }
+
+    function openSettingsModal() {
+      document.getElementById('input-gemini-key').value = appState.geminiKey;
+      document.getElementById('input-gemini-model').value = appState.geminiModel;
+      document.getElementById('input-target-calories').value = appState.targets.calories;
+      document.getElementById('input-target-carbs').value = appState.targets.carbs;
+      document.getElementById('input-target-protein').value = appState.targets.protein;
+      document.getElementById('input-target-fat').value = appState.targets.fat;
+      document.getElementById('test-keys-result').classList.add('hidden');
+      updateFoodDbInfo();
+      document.getElementById('settings-modal').classList.remove('hidden');
+    }
+
+    function closeSettingsModal() {
+      document.getElementById('settings-modal').classList.add('hidden');
+    }
+
+    /* Rimuove spazi, a capo e virgolette che spesso si incollano per errore dal telefono */
+    function cleanKey(v) {
+      return String(v || '').replace(/[\s"'`]/g, '');
+    }
+
+    function readSettingsForm() {
+      appState.geminiKey = cleanKey(document.getElementById('input-gemini-key').value);
+      appState.geminiModel = document.getElementById('input-gemini-model').value.trim().replace(/^models\//, '');
+    }
+
+    function saveSettings() {
+      readSettingsForm();
+      appState.targets = {
+        calories: parseInt(document.getElementById('input-target-calories').value) || 2000,
+        carbs: parseInt(document.getElementById('input-target-carbs').value) || 220,
+        protein: parseInt(document.getElementById('input-target-protein').value) || 130,
+        fat: parseInt(document.getElementById('input-target-fat').value) || 60
+      };
+
+      localStorage.setItem(STORAGE_KEYS.GEMINI_KEY, appState.geminiKey);
+      localStorage.setItem(STORAGE_KEYS.GEMINI_MODEL, appState.geminiModel);
+      localStorage.setItem(STORAGE_KEYS.TARGETS, JSON.stringify(appState.targets));
+      sessionStorage.removeItem(CACHE_KEYS.GEMINI_MODELS);
+
+      applyTargetsToUI();
+      renderDashboardAndMeals();
+      checkApiKeys();
+      closeSettingsModal();
+      showToast('Impostazioni salvate!', 'success');
+    }
+
+    /* Diagnostica: verifica che la chiave funzioni ed elenca i modelli scelti */
+    async function testApiKeys() {
+      readSettingsForm();
+      const btn = document.getElementById('test-keys-btn');
+      const out = document.getElementById('test-keys-result');
+      btn.disabled = true;
+      out.classList.remove('hidden');
+      out.innerHTML = '<p class="text-slate-400">Verifica in corso...</p>';
+
+      const lines = [];
+      if (!appState.geminiKey) {
+        lines.push('<p class="text-amber-400">⚠️ Gemini: chiave mancante</p>');
+      } else {
+        try {
+          const list = appState.geminiModel ? await getGeminiCandidates(true) : orderBySpeed(await getGeminiCandidates(true));
+          lines.push(`<p class="text-emerald-400">✓ Gemini OK — userà per primo: <b>${escapeHtml(list[0])}</b></p>`);
+          lines.push('<p class="text-slate-400 pt-1">Ordine di utilizzo:</p>');
+          list.forEach((m, i) => {
+            const s = modelStats[m];
+            const tag = isPenalized(m)
+              ? '<span class="text-rose-400">lento/errore recente</span>'
+              : s?.avgMs ? `<span class="text-emerald-400">~${(s.avgMs / 1000).toFixed(1)}s</span>` : '<span class="text-slate-500">mai provato</span>';
+            lines.push(`<p class="text-slate-300">${i + 1}. ${escapeHtml(m)} · ${tag}</p>`);
+          });
+          if (Object.keys(modelStats).length) {
+            lines.push('<button type="button" onclick="resetModelStats()" class="mt-1 text-[11px] text-sky-400 underline">Azzera statistiche velocità</button>');
+          }
+        } catch (e) {
+          lines.push(`<p class="text-rose-400">✕ ${escapeHtml(e.message)}</p>`);
+        }
+      }
+      lines.push('<p class="text-slate-500 pt-1">Ricorda di premere "Salva Impostazioni".</p>');
+      out.innerHTML = lines.join('');
+      btn.disabled = false;
+    }
+
+    function applyTargetsToUI() {
+      document.getElementById('target-calories').textContent = appState.targets.calories;
+      document.getElementById('target-carbs').textContent = appState.targets.carbs;
+      document.getElementById('target-protein').textContent = appState.targets.protein;
+      document.getElementById('target-fat').textContent = appState.targets.fat;
+    }
+
+    function togglePasswordVisibility(inputId) {
+      const input = document.getElementById(inputId);
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
+    /* ==============================================================
+       UTILITÀ UI
+    ============================================================== */
+    let toastTimeout;
+    function showToast(message, type = 'info') {
+      const toast = document.getElementById('toast');
+      const base = 'fixed top-5 left-1/2 -translate-x-1/2 z-[60] max-w-[90%] w-auto px-4 py-3 rounded-2xl shadow-2xl backdrop-blur-md text-sm font-medium border flex items-center gap-2 transition-all duration-300 opacity-100 transform translate-y-0 pointer-events-none ';
+      const styles = {
+        error: ['bg-rose-500/90 border-rose-400 text-white', '✕'],
+        success: ['bg-emerald-600/90 border-emerald-400 text-white', '✓'],
+        info: ['bg-slate-800/95 border-slate-700 text-slate-200', 'ℹ']
+      };
+      const [cls, icon] = styles[type] || styles.info;
+      clearTimeout(toastTimeout);
+      document.getElementById('toast-message').textContent = message;
+      document.getElementById('toast-icon').textContent = icon;
+      toast.className = base + cls;
+      toastTimeout = setTimeout(() => {
+        toast.classList.replace('opacity-100', 'opacity-0');
+        toast.classList.replace('translate-y-0', '-translate-y-4');
+      }, 4000);
+    }
+
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+  </script>
+</body>
+</html>
