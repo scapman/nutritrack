@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="it" class="h-full bg-slate-950 text-slate-100">
 <head>
   <meta charset="UTF-8">
@@ -36,6 +36,39 @@
     .safe-bottom { padding-bottom: env(safe-area-inset-bottom, 20px); }
     ::-webkit-scrollbar { display: none; }
     * { -webkit-tap-highlight-color: transparent; }
+
+    /* Sfondo a tema Nutrizione & Benessere (organico, bio, gradienti mesh e pattern foglie) */
+    body {
+      background-color: #060a11;
+      background-image: 
+        /* Glow organico verde naturale in alto a destra */
+        radial-gradient(circle at 90% 12%, rgba(16, 185, 129, 0.14) 0%, transparent 45%),
+        /* Glow energizzante lime/menta al centro a sinistra */
+        radial-gradient(circle at 10% 45%, rgba(52, 211, 153, 0.10) 0%, transparent 40%),
+        /* Glow ambrato/caldo in basso a destra per equilibrio nutrizionale */
+        radial-gradient(circle at 85% 85%, rgba(245, 158, 11, 0.08) 0%, transparent 45%),
+        /* Pattern discreto e raffinato a tema botanico / foglie nutrizionali in SVG data URI */
+        url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2310b981' fill-opacity='0.025' fill-rule='evenodd'%3E%3Cpath d='M20 15c4-6 12-8 18-4-1 6-5 12-11 14-4 1-7-4-7-10zm40 40c4-6 12-8 18-4-1 6-5 12-11 14-4 1-7-4-7-10zM15 65c-2-5 1-11 6-13 4 3 6 8 4 13-2 3-8 3-10 0zm45-45c-2-5 1-11 6-13 4 3 6 8 4 13-2 3-8 3-10 0z'/%3E%3C/g%3E%3C/svg%3E");
+      background-attachment: fixed;
+    }
+
+    /* Bubble Design System: forme organiche e tattili */
+    .bubble-btn {
+      border-radius: 9999px;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.4), inset 0 1px 1px 0 rgba(255, 255, 255, 0.12);
+    }
+    .bubble-btn:active {
+      transform: scale(0.94);
+      box-shadow: 0 2px 6px -1px rgba(0, 0, 0, 0.5), inset 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+    }
+    .bubble-card {
+      border-radius: 1.75rem; /* rounded-3xl */
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), inset 0 1px 1px 0 rgba(255, 255, 255, 0.06);
+    }
+    .bubble-glow {
+      box-shadow: 0 8px 24px -4px rgba(16, 185, 129, 0.35), inset 0 1px 2px 0 rgba(255, 255, 255, 0.3);
+    }
   </style>
 </head>
 <body class="h-full flex flex-col font-sans select-none overflow-hidden bg-slate-950 text-slate-100">
@@ -53,16 +86,16 @@
         <svg class="w-5 h-5 text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
       </div>
       <div>
-        <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-1.5">NutriTrack <span class="text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded-full border border-emerald-500/20">AI v3</span></h1>
-        <p class="text-xs text-slate-400" id="current-date">Oggi</p>
+        <h1 class="text-lg font-extrabold tracking-tight text-white flex items-center gap-2">NutriTrack <span class="text-xs font-bold bg-emerald-500/15 text-emerald-400 px-2.5 py-0.5 rounded-full border border-emerald-500/30">AI v3</span></h1>
+        <p class="text-xs font-medium text-slate-400" id="current-date">Oggi</p>
       </div>
     </div>
-    <div class="flex items-center gap-2">
-      <button onclick="openStatsModal()" class="w-9 h-9 rounded-xl bg-slate-800/90 hover:bg-slate-700/80 active:scale-95 transition flex items-center justify-center text-slate-300 border border-slate-700/60" aria-label="Statistiche">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+    <div class="flex items-center gap-2.5">
+      <button onclick="openStatsModal()" class="w-11 h-11 bubble-btn bg-slate-800/95 hover:bg-slate-700/80 active:scale-90 flex items-center justify-center text-slate-200 border border-slate-700/80" aria-label="Statistiche">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
       </button>
-      <button onclick="openSettingsModal()" class="w-9 h-9 rounded-xl bg-slate-800/90 hover:bg-slate-700/80 active:scale-95 transition flex items-center justify-center text-slate-300 border border-slate-700/60" aria-label="Impostazioni">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      <button onclick="openSettingsModal()" class="w-11 h-11 bubble-btn bg-slate-800/95 hover:bg-slate-700/80 active:scale-90 flex items-center justify-center text-slate-200 border border-slate-700/80" aria-label="Impostazioni">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
       </button>
     </div>
   </header>
@@ -70,121 +103,121 @@
   <!-- ================= CONTENUTO SCORREVOLE ================= -->
   <main class="flex-1 overflow-y-auto px-4 py-4 space-y-5 pb-28">
 
-    <!-- BANNER INSTALLAZIONE (compare solo se Chrome permette l'installazione) -->
-    <div id="install-banner" class="hidden bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-4 flex items-center justify-between gap-3">
+    <!-- BANNER INSTALLAZIONE -->
+    <div id="install-banner" class="hidden bg-emerald-500/15 border border-emerald-500/40 rounded-3xl p-4 flex items-center justify-between gap-3 shadow-lg">
       <div>
-        <p class="text-xs font-bold text-emerald-200">📲 Installa NutriTrack</p>
-        <p class="text-[11px] text-emerald-300/80">Aggiungila alla schermata Home e usala come un'app.</p>
+        <p class="text-sm font-bold text-emerald-200">📲 Installa NutriTrack</p>
+        <p class="text-xs text-emerald-300/90 font-medium mt-0.5">Aggiungila alla schermata Home e usala come app nativa.</p>
       </div>
-      <button onclick="installApp()" class="px-3 py-1.5 bg-emerald-400 text-slate-950 font-bold text-xs rounded-xl shadow active:scale-95 shrink-0">Installa</button>
+      <button onclick="installApp()" class="px-4 py-2 bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-extrabold text-xs bubble-btn bubble-glow shrink-0">Installa</button>
     </div>
 
     <!-- NAVIGAZIONE TRA I GIORNI -->
-    <div class="flex items-center justify-between bg-slate-900/70 border border-slate-800 rounded-2xl px-2 py-1.5">
-      <button onclick="shiftViewDate(-1)" class="w-9 h-9 rounded-xl hover:bg-slate-800 active:scale-90 text-slate-300 text-lg font-bold" aria-label="Giorno precedente">‹</button>
-      <div class="text-center">
-        <p id="view-date-label" class="text-sm font-bold text-white">Oggi</p>
-        <button id="back-to-today-btn" onclick="goToToday()" class="hidden text-[10px] text-emerald-400 font-semibold">Torna a oggi</button>
+    <div class="flex items-center justify-between bg-slate-900/80 border border-slate-800/90 rounded-full px-3 py-2 shadow-md">
+      <button onclick="shiftViewDate(-1)" class="w-10 h-10 bubble-btn bg-slate-800 hover:bg-slate-700 active:scale-90 text-slate-200 text-xl font-bold flex items-center justify-center border border-slate-700/60" aria-label="Giorno precedente">‹</button>
+      <div class="text-center px-2">
+        <p id="view-date-label" class="text-sm sm:text-base font-bold text-white tracking-wide">Oggi</p>
+        <button id="back-to-today-btn" onclick="goToToday()" class="hidden text-xs text-emerald-400 font-bold hover:underline">Torna a oggi</button>
       </div>
-      <button id="next-day-btn" onclick="shiftViewDate(1)" class="w-9 h-9 rounded-xl hover:bg-slate-800 active:scale-90 text-slate-300 text-lg font-bold disabled:opacity-20 disabled:pointer-events-none" aria-label="Giorno successivo">›</button>
+      <button id="next-day-btn" onclick="shiftViewDate(1)" class="w-10 h-10 bubble-btn bg-slate-800 hover:bg-slate-700 active:scale-90 text-slate-200 text-xl font-bold flex items-center justify-center border border-slate-700/60 disabled:opacity-20 disabled:pointer-events-none" aria-label="Giorno successivo">›</button>
     </div>
 
     <!-- DASHBOARD SUMMARY (Calorie & Macronutrienti) -->
-    <section class="bg-gradient-to-b from-slate-900 to-slate-900/90 rounded-3xl p-5 border border-slate-800 shadow-xl space-y-4">
+    <section class="bubble-card bg-gradient-to-b from-slate-900 to-slate-900/90 p-5 border border-slate-800/90 space-y-4">
       <div class="flex items-center justify-between">
         <div>
-          <span id="summary-title" class="text-xs uppercase tracking-wider font-semibold text-slate-400">Riepilogo Giornaliero</span>
-          <div class="flex items-baseline gap-2 mt-0.5">
-            <span class="text-3xl font-extrabold text-white tracking-tight" id="consumed-calories">0</span>
-            <span class="text-xs font-medium text-slate-400">/ <span id="target-calories">2000</span> kcal</span>
+          <span id="summary-title" class="text-xs uppercase tracking-wider font-bold text-slate-400">Riepilogo Giornaliero</span>
+          <div class="flex items-baseline gap-2 mt-1">
+            <span class="text-4xl font-black text-white tracking-tight" id="consumed-calories">0</span>
+            <span class="text-sm font-semibold text-slate-400">/ <span id="target-calories">2000</span> kcal</span>
           </div>
         </div>
-        <div class="relative w-16 h-16 flex items-center justify-center">
+        <div class="relative w-20 h-20 flex items-center justify-center">
           <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-            <path class="text-slate-800" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+            <path class="text-slate-800/90" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
             <path id="calorie-progress-circle" class="text-emerald-500 transition-all duration-700 ease-out" stroke-dasharray="0, 100" stroke-width="3.5" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
           </svg>
-          <span class="absolute text-[11px] font-bold text-slate-300" id="calorie-percent">0%</span>
+          <span class="absolute text-sm font-black text-slate-200" id="calorie-percent">0%</span>
         </div>
       </div>
 
-      <!-- Macro Progress Bars -->
-      <div class="grid grid-cols-3 gap-2.5 pt-2 border-t border-slate-800/80">
-        <div class="bg-slate-950/60 rounded-2xl p-3 border border-slate-800/60 flex flex-col justify-between">
-          <div class="flex items-center justify-between text-[11px] font-medium text-carbs">
+      <!-- Macro Progress Bars Bubble Cards -->
+      <div class="grid grid-cols-3 gap-3 pt-3 border-t border-slate-800/90">
+        <div class="bg-slate-950/70 rounded-3xl p-3.5 border border-slate-800/70 flex flex-col justify-between shadow-inner">
+          <div class="flex items-center justify-between text-xs font-bold text-carbs">
             <span>Carbo</span>
-            <span id="carbs-label">0g</span>
+            <span id="carbs-label" class="text-sm font-extrabold">0g</span>
           </div>
-          <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden my-2">
+          <div class="w-full bg-slate-800/90 h-2 rounded-full overflow-hidden my-2.5">
             <div id="carbs-bar" class="bg-carbs h-full rounded-full transition-all duration-500" style="width: 0%"></div>
           </div>
-          <span class="text-[10px] text-slate-400 font-medium text-right">target <span id="target-carbs">220</span>g</span>
+          <span class="text-xs text-slate-400 font-medium text-right">target <span id="target-carbs" class="font-bold text-slate-300">220</span>g</span>
         </div>
 
-        <div class="bg-slate-950/60 rounded-2xl p-3 border border-slate-800/60 flex flex-col justify-between">
-          <div class="flex items-center justify-between text-[11px] font-medium text-protein">
+        <div class="bg-slate-950/70 rounded-3xl p-3.5 border border-slate-800/70 flex flex-col justify-between shadow-inner">
+          <div class="flex items-center justify-between text-xs font-bold text-protein">
             <span>Proteine</span>
-            <span id="protein-label">0g</span>
+            <span id="protein-label" class="text-sm font-extrabold">0g</span>
           </div>
-          <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden my-2">
+          <div class="w-full bg-slate-800/90 h-2 rounded-full overflow-hidden my-2.5">
             <div id="protein-bar" class="bg-protein h-full rounded-full transition-all duration-500" style="width: 0%"></div>
           </div>
-          <span class="text-[10px] text-slate-400 font-medium text-right">target <span id="target-protein">130</span>g</span>
+          <span class="text-xs text-slate-400 font-medium text-right">target <span id="target-protein" class="font-bold text-slate-300">130</span>g</span>
         </div>
 
-        <div class="bg-slate-950/60 rounded-2xl p-3 border border-slate-800/60 flex flex-col justify-between">
-          <div class="flex items-center justify-between text-[11px] font-medium text-fat">
+        <div class="bg-slate-950/70 rounded-3xl p-3.5 border border-slate-800/70 flex flex-col justify-between shadow-inner">
+          <div class="flex items-center justify-between text-xs font-bold text-fat">
             <span>Grassi</span>
-            <span id="fat-label">0g</span>
+            <span id="fat-label" class="text-sm font-extrabold">0g</span>
           </div>
-          <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden my-2">
+          <div class="w-full bg-slate-800/90 h-2 rounded-full overflow-hidden my-2.5">
             <div id="fat-bar" class="bg-fat h-full rounded-full transition-all duration-500" style="width: 0%"></div>
           </div>
-          <span class="text-[10px] text-slate-400 font-medium text-right">target <span id="target-fat">60</span>g</span>
+          <span class="text-xs text-slate-400 font-medium text-right">target <span id="target-fat" class="font-bold text-slate-300">60</span>g</span>
         </div>
       </div>
     </section>
 
     <!-- BANNER AVVISO CHIAVI API -->
-    <div id="api-keys-warning" class="hidden bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 flex items-center justify-between">
+    <div id="api-keys-warning" class="hidden bg-amber-500/15 border border-amber-500/40 rounded-3xl p-4 flex items-center justify-between shadow-lg">
       <div class="flex items-center gap-3">
-        <span class="text-amber-400 text-xl">⚠️</span>
+        <span class="text-amber-400 text-2xl">⚠️</span>
         <div>
-          <p class="text-xs font-bold text-amber-200">Chiave API Mancante</p>
-          <p class="text-[11px] text-amber-300/80">Inserisci la chiave gratuita di Gemini per abilitare la scansione.</p>
+          <p class="text-sm font-bold text-amber-200">Chiave API Mancante</p>
+          <p class="text-xs text-amber-300/90 font-medium mt-0.5">Inserisci la chiave gratuita di Gemini per abilitare la scansione.</p>
         </div>
       </div>
-      <button onclick="openSettingsModal()" class="px-3 py-1.5 bg-amber-400 text-slate-950 font-bold text-xs rounded-xl shadow active:scale-95">Configura</button>
+      <button onclick="openSettingsModal()" class="px-4 py-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs bubble-btn shadow-md shrink-0">Configura</button>
     </div>
 
     <!-- SEZIONE STORICO DEI PASTI -->
     <div class="space-y-4">
-      <div class="flex items-center justify-between px-1">
-        <h2 id="diary-title" class="text-sm font-bold text-slate-300 tracking-wide uppercase">Diario Pasti di Oggi</h2>
-        <button onclick="clearViewedDayMeals()" class="text-xs text-rose-400/80 hover:text-rose-400 active:scale-95 transition">Svuota giorno</button>
+      <div class="flex items-center justify-between px-2 pt-1">
+        <h2 id="diary-title" class="text-sm font-extrabold text-slate-200 tracking-wider uppercase">Diario Pasti di Oggi</h2>
+        <button onclick="clearViewedDayMeals()" class="text-xs font-bold text-rose-400 hover:text-rose-300 px-3 py-1 rounded-full hover:bg-rose-500/10 active:scale-90 transition">Svuota giorno</button>
       </div>
       <div class="space-y-3" id="meals-container"></div>
     </div>
   </main>
 
   <!-- ================= BOTTOM BAR ================= -->
-  <nav class="safe-bottom fixed bottom-0 left-0 right-0 bg-slate-900/90 backdrop-blur-xl border-t border-slate-800/80 px-6 py-3 flex items-center justify-around z-30">
-    <button onclick="triggerQuickAction('camera')" class="flex flex-col items-center gap-1 text-slate-400 hover:text-emerald-400 active:scale-90 transition">
-      <div class="w-10 h-10 rounded-2xl bg-slate-800 flex items-center justify-center border border-slate-700/60">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+  <nav class="safe-bottom fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur-xl border-t border-slate-800/80 px-8 py-3 flex items-center justify-around z-30 shadow-2xl">
+    <button onclick="triggerQuickAction('camera')" class="flex flex-col items-center gap-1.5 text-slate-300 hover:text-emerald-400 active:scale-90 transition group">
+      <div class="w-12 h-12 bubble-btn bg-slate-800 group-hover:bg-slate-700 flex items-center justify-center border border-slate-700/80 shadow-md">
+        <svg class="w-6 h-6 text-slate-200 group-hover:text-emerald-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
       </div>
-      <span class="text-[10px] font-semibold">Fotocamera</span>
+      <span class="text-xs font-bold tracking-tight">Fotocamera</span>
     </button>
 
-    <button onclick="openScanModal()" class="-mt-7 bg-gradient-to-tr from-emerald-500 to-teal-400 p-4 rounded-3xl text-slate-950 shadow-xl shadow-emerald-500/30 active:scale-90 transition flex items-center justify-center" aria-label="Nuovo pasto">
-      <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+    <button onclick="openScanModal()" class="-mt-8 bg-gradient-to-tr from-emerald-400 to-teal-400 p-4.5 w-16 h-16 rounded-full text-slate-950 bubble-glow bubble-btn active:scale-90 transition flex items-center justify-center" aria-label="Nuovo pasto">
+      <svg class="w-8 h-8 font-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.8" d="M12 4v16m8-8H4"/></svg>
     </button>
 
-    <button onclick="triggerQuickAction('gallery')" class="flex flex-col items-center gap-1 text-slate-400 hover:text-emerald-400 active:scale-90 transition">
-      <div class="w-10 h-10 rounded-2xl bg-slate-800 flex items-center justify-center border border-slate-700/60">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+    <button onclick="triggerQuickAction('gallery')" class="flex flex-col items-center gap-1.5 text-slate-300 hover:text-emerald-400 active:scale-90 transition group">
+      <div class="w-12 h-12 bubble-btn bg-slate-800 group-hover:bg-slate-700 flex items-center justify-center border border-slate-700/80 shadow-md">
+        <svg class="w-6 h-6 text-slate-200 group-hover:text-emerald-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
       </div>
-      <span class="text-[10px] font-semibold">Galleria</span>
+      <span class="text-xs font-bold tracking-tight">Galleria</span>
     </button>
   </nav>
 
@@ -196,100 +229,100 @@
   <div id="scan-modal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md hidden flex flex-col justify-end">
     <div class="bg-slate-900 border-t border-slate-800 rounded-t-[32px] p-6 max-h-[92vh] overflow-y-auto space-y-5">
       <div class="flex items-center justify-between">
-        <h3 id="scan-modal-title" class="text-lg font-bold text-white">Scansione Pasto con AI</h3>
-        <button onclick="closeScanModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center text-sm font-bold active:scale-90">✕</button>
+        <h3 id="scan-modal-title" class="text-xl font-extrabold text-white">Scansione Pasto con AI</h3>
+        <button onclick="closeScanModal()" class="w-10 h-10 bubble-btn bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-base font-bold active:scale-90 border border-slate-700/60">✕</button>
       </div>
 
       <!-- Selezione Tipologia Pasto -->
       <div>
-        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Categoria Pasto</label>
-        <div class="grid grid-cols-4 gap-2">
-          <button type="button" onclick="selectMealType('colazione')" class="meal-type-btn py-2.5 rounded-2xl text-xs font-bold border transition" data-type="colazione">Colazione</button>
-          <button type="button" onclick="selectMealType('pranzo')" class="meal-type-btn py-2.5 rounded-2xl text-xs font-bold border transition" data-type="pranzo">Pranzo</button>
-          <button type="button" onclick="selectMealType('spuntino')" class="meal-type-btn py-2.5 rounded-2xl text-xs font-bold border transition" data-type="spuntino">Spuntino</button>
-          <button type="button" onclick="selectMealType('cena')" class="meal-type-btn py-2.5 rounded-2xl text-xs font-bold border transition" data-type="cena">Cena</button>
+        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2.5">Categoria Pasto</label>
+        <div class="grid grid-cols-4 gap-2.5">
+          <button type="button" onclick="selectMealType('colazione')" class="meal-type-btn py-3 bubble-btn text-xs sm:text-sm font-bold border transition shadow-sm" data-type="colazione">Colazione</button>
+          <button type="button" onclick="selectMealType('pranzo')" class="meal-type-btn py-3 bubble-btn text-xs sm:text-sm font-bold border transition shadow-sm" data-type="pranzo">Pranzo</button>
+          <button type="button" onclick="selectMealType('spuntino')" class="meal-type-btn py-3 bubble-btn text-xs sm:text-sm font-bold border transition shadow-sm" data-type="spuntino">Spuntino</button>
+          <button type="button" onclick="selectMealType('cena')" class="meal-type-btn py-3 bubble-btn text-xs sm:text-sm font-bold border transition shadow-sm" data-type="cena">Cena</button>
         </div>
       </div>
 
       <!-- PASTI FREQUENTI: aggiunta rapida senza foto e senza API -->
       <div id="frequent-meals-section" class="hidden">
-        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">⚡ Pasti frequenti (aggiunta rapida)</label>
-        <div id="frequent-meals-list" class="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1"></div>
+        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">⚡ Pasti frequenti (1 tocco)</label>
+        <div id="frequent-meals-list" class="flex gap-2.5 overflow-x-auto pb-2 -mx-1 px-1"></div>
       </div>
 
       <!-- Area Selezione / Anteprima Immagine -->
-      <div id="image-dropzone" class="border-2 border-dashed border-slate-700 rounded-2xl p-4 text-center cursor-pointer relative bg-slate-950/40 min-h-[170px] flex flex-col items-center justify-center overflow-hidden">
-        <img id="image-preview" class="hidden absolute inset-0 w-full h-full object-cover rounded-2xl" alt="Anteprima">
-        <div id="image-placeholder" class="space-y-2">
-          <div class="w-12 h-12 mx-auto rounded-2xl bg-slate-800 text-emerald-400 flex items-center justify-center">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+      <div id="image-dropzone" class="border-2 border-dashed border-slate-700/80 rounded-3xl p-5 text-center cursor-pointer relative bg-slate-950/50 min-h-[190px] flex flex-col items-center justify-center overflow-hidden transition hover:border-emerald-500/60 shadow-inner">
+        <img id="image-preview" class="hidden absolute inset-0 w-full h-full object-cover rounded-3xl" alt="Anteprima">
+        <div id="image-placeholder" class="space-y-3">
+          <div class="w-14 h-14 mx-auto bubble-btn bg-slate-800 text-emerald-400 flex items-center justify-center border border-slate-700/80 shadow-md">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
           </div>
-          <p class="text-xs font-medium text-slate-300">Tocca per scattare una foto o caricarla</p>
+          <p class="text-sm font-semibold text-slate-200">Tocca per scattare una foto o caricarla</p>
           <div class="flex justify-center gap-3 pt-1">
-            <button onclick="event.stopPropagation(); triggerQuickAction('camera')" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs rounded-xl border border-slate-700">Fotocamera</button>
-            <button onclick="event.stopPropagation(); triggerQuickAction('gallery')" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs rounded-xl border border-slate-700">Galleria</button>
+            <button onclick="event.stopPropagation(); triggerQuickAction('camera')" class="px-4 py-2 bubble-btn bg-slate-800 hover:bg-slate-700 text-slate-100 text-xs font-bold border border-slate-700 shadow-sm">Fotocamera</button>
+            <button onclick="event.stopPropagation(); triggerQuickAction('gallery')" class="px-4 py-2 bubble-btn bg-slate-800 hover:bg-slate-700 text-slate-100 text-xs font-bold border border-slate-700 shadow-sm">Galleria</button>
           </div>
         </div>
-        <button id="remove-img-btn" onclick="clearSelectedImage(event)" class="hidden absolute top-2 right-2 bg-slate-900/90 text-white w-7 h-7 rounded-full text-xs font-bold border border-slate-700">✕</button>
+        <button id="remove-img-btn" onclick="clearSelectedImage(event)" class="hidden absolute top-3 right-3 bg-slate-900/90 hover:bg-rose-500 text-white w-9 h-9 rounded-full text-sm font-bold border border-slate-700 shadow-lg active:scale-90 transition">✕</button>
       </div>
 
       <!-- Note opzionali per migliorare la stima -->
       <div>
-        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Note (opzionale)</label>
-        <input type="text" id="meal-notes" placeholder="es. pasta integrale, 1 cucchiaio d'olio, porzione abbondante" class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-2.5 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500">
+        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Note (opzionale)</label>
+        <input type="text" id="meal-notes" placeholder="es. pasta integrale, 1 cucchiaio d'olio, porzione abbondante" class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 shadow-inner">
       </div>
 
       <!-- STATO AVANZAMENTO PIPELINE A 2 FASI -->
-      <div id="pipeline-status" class="hidden space-y-3 p-4 bg-slate-950/70 rounded-2xl border border-slate-800">
+      <div id="pipeline-status" class="hidden space-y-3 p-4 bg-slate-950/80 rounded-3xl border border-slate-800 shadow-inner">
         <div class="flex items-center gap-3">
-          <div id="step-1-icon" class="w-5 h-5 shrink-0"></div>
+          <div id="step-1-icon" class="w-6 h-6 shrink-0"></div>
           <div class="flex-1 min-w-0">
-            <p class="text-xs font-bold text-white flex items-center justify-between gap-2">
+            <p class="text-sm font-bold text-white flex items-center justify-between gap-2">
               <span>Fase 1: Gemini Vision</span>
-              <span id="step-1-badge" class="text-[10px] font-medium truncate"></span>
+              <span id="step-1-badge" class="text-xs font-bold truncate"></span>
             </p>
-            <p class="text-[11px] text-slate-400">Riconoscimento cibo e stima grammature in JSON</p>
+            <p class="text-xs text-slate-400 mt-0.5">Riconoscimento cibo e stima grammature in JSON</p>
           </div>
         </div>
-        <div class="flex items-center gap-3 pt-2 border-t border-slate-900">
-          <div id="step-2-icon" class="w-5 h-5 shrink-0"></div>
+        <div class="flex items-center gap-3 pt-2.5 border-t border-slate-800/80">
+          <div id="step-2-icon" class="w-6 h-6 shrink-0"></div>
           <div class="flex-1 min-w-0">
-            <p class="text-xs font-bold text-white flex items-center justify-between gap-2">
+            <p class="text-sm font-bold text-white flex items-center justify-between gap-2">
               <span>Fase 2: Gemini Nutrizionista</span>
-              <span id="step-2-badge" class="text-[10px] font-medium truncate"></span>
+              <span id="step-2-badge" class="text-xs font-bold truncate"></span>
             </p>
-            <p class="text-[11px] text-slate-400">Calcolo nutrizionale di precisione per grammi</p>
+            <p class="text-xs text-slate-400 mt-0.5">Calcolo nutrizionale di precisione per grammi</p>
           </div>
         </div>
       </div>
 
-      <!-- PANNELLO ERRORE DETTAGLIATO (resta visibile, non scompare come il toast) -->
-      <div id="pipeline-error" class="hidden p-4 bg-rose-500/10 border border-rose-500/40 rounded-2xl space-y-1">
-        <p class="text-xs font-bold text-rose-300">Dettaglio errore</p>
-        <p id="pipeline-error-text" class="text-[11px] text-rose-200 break-words select-text font-mono"></p>
+      <!-- PANNELLO ERRORE DETTAGLIATO -->
+      <div id="pipeline-error" class="hidden p-4 bg-rose-500/15 border border-rose-500/40 rounded-3xl space-y-1 shadow-lg">
+        <p class="text-sm font-bold text-rose-300">Dettaglio errore</p>
+        <p id="pipeline-error-text" class="text-xs text-rose-200 break-words select-text font-mono"></p>
       </div>
 
       <!-- RISULTATO ANALISI -->
-      <div id="analysis-result" class="hidden space-y-3 bg-slate-950/80 p-4 rounded-2xl border border-slate-800">
-        <h4 class="text-xs font-bold text-emerald-400 uppercase tracking-wide">Risultato Analisi Nutrizionale</h4>
+      <div id="analysis-result" class="hidden space-y-3.5 bg-slate-950/85 p-5 rounded-3xl border border-slate-800 shadow-xl">
+        <h4 class="text-xs font-extrabold text-emerald-400 uppercase tracking-wider">Risultato Analisi Nutrizionale</h4>
         <div>
-          <label class="text-[10px] text-slate-500 block mb-1">Piatto riconosciuto (modificabile)</label>
-          <input type="text" id="result-dish-name" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm font-bold text-white focus:outline-none focus:border-emerald-500">
+          <label class="text-xs font-semibold text-slate-400 block mb-1.5">Piatto riconosciuto (modificabile)</label>
+          <input type="text" id="result-dish-name" class="w-full bg-slate-900 border border-slate-700/80 rounded-2xl px-4 py-2.5 text-base font-bold text-white focus:outline-none focus:border-emerald-500 shadow-inner">
         </div>
-        <p class="text-[10px] text-slate-500">Puoi correggere i grammi: calorie e macro si ricalcolano subito, senza nuove richieste. <span class="text-sky-300">DB</span> = dal database locale, <span class="text-emerald-300">AI</span> = calcolato ora da Gemini.</p>
-        <div id="result-items-list" class="space-y-1.5 text-xs"></div>
-        <div class="pt-2 border-t border-slate-800 flex justify-between items-center text-xs font-bold text-white">
+        <p class="text-xs text-slate-400 leading-relaxed">Tocca i grammi per correggerli: calorie e macro si ricalcolano subito. <span class="text-sky-300 font-bold">DB</span> = dal database locale, <span class="text-emerald-300 font-bold">AI</span> = calcolato ora.</p>
+        <div id="result-items-list" class="space-y-2 text-sm pt-1"></div>
+        <div class="pt-3 border-t border-slate-800 flex justify-between items-center text-sm font-extrabold text-white">
           <span>Totale Stimato</span>
           <span id="result-total-macros">0 kcal</span>
         </div>
       </div>
 
-      <!-- Bottoni Azione -->
-      <div class="space-y-2 pt-2">
-        <button id="start-analysis-btn" onclick="executeNutritionPipeline()" class="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-extrabold rounded-2xl shadow-lg shadow-emerald-500/20 active:scale-95 transition disabled:opacity-50 disabled:pointer-events-none">
+      <!-- Bottoni Azione Bubble -->
+      <div class="space-y-2.5 pt-2">
+        <button id="start-analysis-btn" onclick="executeNutritionPipeline()" class="w-full py-4 bg-gradient-to-r from-emerald-400 to-teal-400 text-slate-950 font-black text-base bubble-btn bubble-glow active:scale-95 transition disabled:opacity-50 disabled:pointer-events-none">
           Analizza con Pipeline AI
         </button>
-        <button id="save-meal-btn" onclick="saveAnalyzedMeal()" class="hidden w-full py-3.5 bg-emerald-500 text-slate-950 font-extrabold rounded-2xl shadow-lg active:scale-95 transition">
+        <button id="save-meal-btn" onclick="saveAnalyzedMeal()" class="hidden w-full py-4 bg-emerald-400 text-slate-950 font-black text-base bubble-btn bubble-glow active:scale-95 transition">
           Salva nel Diario
         </button>
       </div>
@@ -298,86 +331,86 @@
 
   <!-- ================= MODALE 2: IMPOSTAZIONI & API KEYS ================= -->
   <div id="settings-modal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md hidden flex flex-col justify-end">
-    <div class="bg-slate-900 border-t border-slate-800 rounded-t-[32px] p-6 max-h-[92vh] overflow-y-auto space-y-5">
+    <div class="bg-slate-900 border-t border-slate-800 rounded-t-[36px] p-6 max-h-[92vh] overflow-y-auto space-y-6">
       <div class="flex items-center justify-between">
-        <h3 class="text-lg font-bold text-white">Impostazioni & Chiave API</h3>
-        <button onclick="closeSettingsModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center text-sm font-bold active:scale-90">✕</button>
+        <h3 class="text-xl font-extrabold text-white">Impostazioni & Chiave API</h3>
+        <button onclick="closeSettingsModal()" class="w-10 h-10 bubble-btn bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-base font-bold active:scale-90 border border-slate-700/60">✕</button>
       </div>
 
-      <div class="space-y-4">
+      <div class="space-y-5">
         <!-- Gemini Key -->
-        <div class="space-y-1">
-          <label class="block text-xs font-semibold text-slate-300">Chiave API Gemini (Google AI Studio)</label>
+        <div class="space-y-1.5">
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider">Chiave API Gemini (Google AI Studio)</label>
           <div class="relative">
-            <input type="password" id="input-gemini-key" placeholder="AIzaSy..." autocomplete="off" class="w-full bg-slate-950 border border-slate-800 rounded-2xl pl-4 pr-16 py-2.5 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500">
-            <button type="button" onclick="togglePasswordVisibility('input-gemini-key')" class="absolute right-3 top-2.5 text-xs text-slate-500">Mostra</button>
+            <input type="password" id="input-gemini-key" placeholder="AIzaSy..." autocomplete="off" class="w-full bg-slate-950 border border-slate-800 rounded-2xl pl-4 pr-20 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 shadow-inner">
+            <button type="button" onclick="togglePasswordVisibility('input-gemini-key')" class="absolute right-3 top-2.5 px-2.5 py-1 text-xs font-bold bubble-btn bg-slate-800 text-slate-300 border border-slate-700">Mostra</button>
           </div>
         </div>
 
         <!-- Modello (avanzato) -->
-        <div class="pt-3 border-t border-slate-800 space-y-3">
+        <div class="pt-4 border-t border-slate-800 space-y-3">
           <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Modello AI (avanzato)</h4>
-          <p class="text-[10px] text-slate-500">Lascia vuoto per la selezione automatica: l'app interroga Google e sceglie il modello Gemini più recente disponibile per la tua chiave. Gemini esegue entrambe le fasi della pipeline (visione + calcolo nutrizionale) con il piano gratuito.</p>
+          <p class="text-xs text-slate-400 leading-relaxed">Lascia vuoto per la selezione automatica: l'app sceglie il modello Gemini più recente e veloce per la tua chiave.</p>
           <div>
-            <label class="text-[11px] text-slate-400 block mb-1">Modello Gemini</label>
-            <input type="text" id="input-gemini-model" placeholder="auto" autocomplete="off" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500">
+            <label class="text-xs font-medium text-slate-400 block mb-1">Modello Gemini</label>
+            <input type="text" id="input-gemini-model" placeholder="auto" autocomplete="off" class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 shadow-inner">
           </div>
-          <button type="button" id="test-keys-btn" onclick="testApiKeys()" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-2xl border border-slate-700 active:scale-95 transition disabled:opacity-50">
-            🔍 Verifica chiave e modello
+          <button type="button" id="test-keys-btn" onclick="testApiKeys()" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-100 text-xs font-extrabold bubble-btn border border-slate-700 active:scale-95 transition disabled:opacity-50">
+            🔍 Verifica chiave e modelli veloci
           </button>
-          <div id="test-keys-result" class="hidden text-[11px] p-3 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-1 break-words select-text"></div>
+          <div id="test-keys-result" class="hidden text-xs p-4 rounded-3xl bg-slate-950/80 border border-slate-800 space-y-1.5 break-words select-text"></div>
         </div>
 
         <!-- Backup -->
-        <div class="pt-3 border-t border-slate-800 space-y-2">
+        <div class="pt-4 border-t border-slate-800 space-y-3">
           <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Backup Dati</h4>
-          <p class="text-[10px] text-slate-500">Esporta storico pasti, obiettivi e database alimenti in un file JSON (la chiave API non viene inclusa). Importalo su un altro telefono o dopo aver cancellato i dati del browser.</p>
-          <div class="grid grid-cols-2 gap-2.5">
-            <button type="button" onclick="exportBackup()" class="py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-2xl border border-slate-700 active:scale-95">⬇️ Esporta</button>
-            <button type="button" onclick="document.getElementById('import-file-input').click()" class="py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-2xl border border-slate-700 active:scale-95">⬆️ Importa</button>
+          <p class="text-xs text-slate-400 leading-relaxed">Esporta storico pasti, obiettivi e database alimenti in un file JSON (la chiave API non viene inclusa).</p>
+          <div class="grid grid-cols-2 gap-3">
+            <button type="button" onclick="exportBackup()" class="py-3 bg-slate-800 hover:bg-slate-700 text-slate-100 text-xs font-extrabold bubble-btn border border-slate-700 active:scale-95 shadow-sm">⬇️ Esporta</button>
+            <button type="button" onclick="document.getElementById('import-file-input').click()" class="py-3 bg-slate-800 hover:bg-slate-700 text-slate-100 text-xs font-extrabold bubble-btn border border-slate-700 active:scale-95 shadow-sm">⬆️ Importa</button>
           </div>
           <input type="file" id="import-file-input" accept="application/json,.json" class="hidden" onchange="importBackup(event)">
         </div>
 
         <!-- Database alimenti locale -->
-        <div class="pt-3 border-t border-slate-800 space-y-2">
+        <div class="pt-4 border-t border-slate-800 space-y-3">
           <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Database Alimenti Locale</h4>
-          <p class="text-[10px] text-slate-500">I valori per 100 g di ogni alimento calcolato vengono salvati sul telefono e riutilizzati nelle scansioni successive, senza consumare richieste API.</p>
-          <div class="flex items-center justify-between bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-2.5">
-            <span class="text-xs text-slate-300"><b id="food-db-count" class="text-emerald-400">0</b> alimenti memorizzati</span>
-            <button type="button" onclick="clearFoodDb()" class="text-xs text-rose-400/80 hover:text-rose-400 active:scale-95">Svuota</button>
+          <p class="text-xs text-slate-400 leading-relaxed">I valori per 100g dei cibi già calcolati vengono salvati sul telefono e riutilizzati subito a costo zero.</p>
+          <div class="flex items-center justify-between bg-slate-950/70 border border-slate-800 rounded-3xl px-4 py-3 shadow-inner">
+            <span class="text-sm font-medium text-slate-200"><b id="food-db-count" class="text-emerald-400 font-extrabold">0</b> alimenti memorizzati</span>
+            <button type="button" onclick="clearFoodDb()" class="text-xs font-bold text-rose-400 hover:text-rose-300 px-3 py-1 rounded-full hover:bg-rose-500/10 active:scale-95 transition">Svuota</button>
           </div>
         </div>
 
         <!-- Obiettivi Giornalieri -->
-        <div class="pt-3 border-t border-slate-800 space-y-3">
+        <div class="pt-4 border-t border-slate-800 space-y-3">
           <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Obiettivi Nutrizionali Giornalieri</h4>
-          <div class="grid grid-cols-2 gap-2.5">
+          <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="text-[11px] text-slate-400 block mb-1">Calorie (kcal)</label>
-              <input type="number" id="input-target-calories" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+              <label class="text-xs text-slate-300 font-bold block mb-1">Calorie (kcal)</label>
+              <input type="number" id="input-target-calories" class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-3.5 py-2.5 text-sm font-bold text-white focus:outline-none focus:border-emerald-500 shadow-inner">
             </div>
             <div>
-              <label class="text-[11px] text-carbs block mb-1">Carboidrati (g)</label>
-              <input type="number" id="input-target-carbs" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+              <label class="text-xs text-carbs font-bold block mb-1">Carboidrati (g)</label>
+              <input type="number" id="input-target-carbs" class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-3.5 py-2.5 text-sm font-bold text-white focus:outline-none focus:border-emerald-500 shadow-inner">
             </div>
             <div>
-              <label class="text-[11px] text-protein block mb-1">Proteine (g)</label>
-              <input type="number" id="input-target-protein" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+              <label class="text-xs text-protein font-bold block mb-1">Proteine (g)</label>
+              <input type="number" id="input-target-protein" class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-3.5 py-2.5 text-sm font-bold text-white focus:outline-none focus:border-emerald-500 shadow-inner">
             </div>
             <div>
-              <label class="text-[11px] text-fat block mb-1">Grassi (g)</label>
-              <input type="number" id="input-target-fat" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+              <label class="text-xs text-fat font-bold block mb-1">Grassi (g)</label>
+              <input type="number" id="input-target-fat" class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-3.5 py-2.5 text-sm font-bold text-white focus:outline-none focus:border-emerald-500 shadow-inner">
             </div>
           </div>
         </div>
 
-        <div class="p-3 bg-slate-950/50 rounded-2xl border border-slate-800/80 text-[11px] text-slate-400 space-y-1">
-          <p class="font-semibold text-slate-300">🔒 Sicurezza e Privacy Locale</p>
-          <p>La chiave è salvata unicamente nel <code class="text-emerald-400">LocalStorage</code> del tuo dispositivo e inviata solo direttamente a Google.</p>
+        <div class="p-4 bg-slate-950/60 rounded-3xl border border-slate-800 text-xs text-slate-400 space-y-1 leading-relaxed">
+          <p class="font-bold text-slate-200">🔒 Sicurezza e Privacy Locale</p>
+          <p>La chiave è salvata unicamente nel <code class="text-emerald-400 font-bold">LocalStorage</code> del tuo dispositivo e inviata solo direttamente a Google.</p>
         </div>
 
-        <button onclick="saveSettings()" class="w-full py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold rounded-2xl shadow-lg active:scale-95 transition">
+        <button onclick="saveSettings()" class="w-full py-4 bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-black text-base bubble-btn bubble-glow active:scale-95 transition">
           Salva Impostazioni
         </button>
       </div>
@@ -387,15 +420,15 @@
   <!-- ================= MODALE 3: STATISTICHE ================= -->
   <div id="stats-modal" class="fixed inset-0 z-50 bg-slate-950 hidden flex flex-col">
     <div class="safe-top px-5 pt-3 pb-3 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between">
-      <h3 class="text-lg font-bold text-white">📊 Statistiche</h3>
-      <button onclick="closeStatsModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center text-sm font-bold active:scale-90">✕</button>
+      <h3 class="text-xl font-extrabold text-white">📊 Statistiche & Andamenti</h3>
+      <button onclick="closeStatsModal()" class="w-10 h-10 bubble-btn bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-base font-bold active:scale-90 border border-slate-700/60">✕</button>
     </div>
     <div class="flex-1 overflow-y-auto px-4 py-4 space-y-4 safe-bottom">
-      <!-- Selettore periodo -->
-      <div class="grid grid-cols-3 gap-2">
-        <button type="button" class="stats-range-btn py-2 rounded-2xl text-xs font-bold border" data-range="7" onclick="setStatsRange(7)">7 giorni</button>
-        <button type="button" class="stats-range-btn py-2 rounded-2xl text-xs font-bold border" data-range="30" onclick="setStatsRange(30)">30 giorni</button>
-        <button type="button" class="stats-range-btn py-2 rounded-2xl text-xs font-bold border" data-range="90" onclick="setStatsRange(90)">90 giorni</button>
+      <!-- Selettore periodo Bubble -->
+      <div class="grid grid-cols-3 gap-2.5">
+        <button type="button" class="stats-range-btn py-2.5 bubble-btn text-xs sm:text-sm font-bold border transition shadow-sm" data-range="7" onclick="setStatsRange(7)">7 giorni</button>
+        <button type="button" class="stats-range-btn py-2.5 bubble-btn text-xs sm:text-sm font-bold border transition shadow-sm" data-range="30" onclick="setStatsRange(30)">30 giorni</button>
+        <button type="button" class="stats-range-btn py-2.5 bubble-btn text-xs sm:text-sm font-bold border transition shadow-sm" data-range="90" onclick="setStatsRange(90)">90 giorni</button>
       </div>
       <div id="stats-content" class="space-y-4"></div>
     </div>
@@ -1040,22 +1073,22 @@ Rispondi SOLO con JSON valido:
       icon.innerHTML = '';
       switch (state) {
         case 'running':
-          icon.className = 'w-5 h-5 shrink-0 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin';
-          badge.className = 'text-[10px] font-medium truncate text-amber-400';
+          icon.className = 'w-6 h-6 shrink-0 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin';
+          badge.className = 'text-xs font-bold truncate text-amber-400';
           break;
         case 'done':
-          icon.className = 'w-5 h-5 shrink-0 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs font-bold';
+          icon.className = 'w-6 h-6 shrink-0 rounded-full bg-emerald-500/25 text-emerald-400 flex items-center justify-center text-xs font-extrabold';
           icon.textContent = '✓';
-          badge.className = 'text-[10px] font-bold truncate text-emerald-400';
+          badge.className = 'text-xs font-bold truncate text-emerald-400';
           break;
         case 'error':
-          icon.className = 'w-5 h-5 shrink-0 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center text-xs font-bold';
+          icon.className = 'w-6 h-6 shrink-0 rounded-full bg-rose-500/25 text-rose-400 flex items-center justify-center text-xs font-extrabold';
           icon.textContent = '!';
-          badge.className = 'text-[10px] font-bold truncate text-rose-400';
+          badge.className = 'text-xs font-bold truncate text-rose-400';
           break;
         default:
-          icon.className = 'w-5 h-5 shrink-0 border-2 border-slate-600 rounded-full';
-          badge.className = 'text-[10px] font-medium truncate text-slate-500';
+          icon.className = 'w-6 h-6 shrink-0 border-2 border-slate-600 rounded-full';
+          badge.className = 'text-xs font-medium truncate text-slate-400';
       }
     }
 
@@ -1080,18 +1113,18 @@ Rispondi SOLO con JSON valido:
         row.className = 'flex items-center justify-between gap-2 py-1.5 border-b border-slate-900';
         row.innerHTML = `
           <div class="min-w-0 flex-1">
-            <div class="flex items-center gap-1.5">
-              <span class="font-medium text-slate-200 truncate">${escapeHtml(item.name)}</span>
-              <span class="text-[9px] px-1 rounded ${item.source === 'db' ? 'bg-sky-500/15 text-sky-300' : 'bg-emerald-500/15 text-emerald-300'}">${item.source === 'db' ? 'DB' : 'AI'}</span>
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-slate-100 text-sm truncate">${escapeHtml(item.name)}</span>
+              <span class="text-xs px-2 py-0.5 rounded-full font-bold ${item.source === 'db' ? 'bg-sky-500/20 text-sky-300 border border-sky-500/30' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'}">${item.source === 'db' ? 'DB' : 'AI'}</span>
             </div>
-            <div class="text-slate-500 text-[10px]">C:${item.carbs_g} P:${item.protein_g} G:${item.fat_g}</div>
+            <div class="text-slate-400 text-xs font-medium mt-0.5">C:${item.carbs_g}g · P:${item.protein_g}g · G:${item.fat_g}g</div>
           </div>
-          <div class="flex items-center gap-1 shrink-0">
+          <div class="flex items-center gap-1.5 shrink-0">
             <input type="number" inputmode="numeric" min="0" value="${item.weight_g}" onchange="updateResultWeight(${idx}, this.value)"
-              class="w-16 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-[11px] text-white text-right focus:outline-none focus:border-emerald-500">
-            <span class="text-[10px] text-slate-500">g</span>
+              class="w-20 bg-slate-900 border border-slate-700/80 rounded-xl px-2.5 py-1.5 text-sm font-extrabold text-white text-right focus:outline-none focus:border-emerald-500 shadow-inner">
+            <span class="text-xs font-bold text-slate-400">g</span>
           </div>
-          <span class="w-14 text-right text-emerald-400 font-semibold text-[11px] shrink-0">${item.calories} kcal</span>`;
+          <span class="w-16 text-right text-emerald-400 font-black text-sm shrink-0">${item.calories} <span class="text-xs font-normal text-slate-400">kcal</span></span>`;
         container.appendChild(row);
       });
 
@@ -1256,44 +1289,46 @@ Rispondi SOLO con JSON valido:
 
         let itemsHtml;
         if (!catMeals.length) {
-          itemsHtml = `<p class="text-[11px] text-slate-500 italic py-1">Nessun alimento registrato</p>`;
+          itemsHtml = `<p class="text-xs text-slate-500 italic py-1.5 px-1 font-medium">Nessun alimento registrato</p>`;
         } else {
           itemsHtml = catMeals.map(meal => {
             const timeStr = new Date(meal.date).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
             const names = (meal.items || []).map(i => `${i.name} (${i.weight_g}g)`).join(', ');
             const title = meal.dishName || names;
             return `
-              <div class="flex items-center justify-between py-2 border-t border-slate-800/60 first:border-0 text-xs">
+              <div class="flex items-center justify-between py-2.5 border-t border-slate-800/70 first:border-0 text-sm">
                 <div class="pr-2 flex-1 min-w-0">
-                  <div class="flex items-center gap-1.5">
-                    <span class="text-[10px] text-slate-400 font-mono shrink-0">${timeStr}</span>
-                    <span class="font-semibold text-slate-100 truncate">${escapeHtml(title)}</span>
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs text-slate-400 font-mono font-bold shrink-0 bg-slate-950/60 px-2 py-0.5 rounded-full border border-slate-800/80">${timeStr}</span>
+                    <span class="font-extrabold text-slate-100 text-sm sm:text-base truncate">${escapeHtml(title)}</span>
                   </div>
-                  ${meal.dishName ? `<div class="text-[10px] text-slate-500 truncate">${escapeHtml(names)}</div>` : ''}
-                  <div class="text-[10px] text-slate-400 flex gap-2 mt-0.5">
-                    <span>${Math.round(num(meal.totals?.calories))} kcal</span>
+                  ${meal.dishName ? `<div class="text-xs text-slate-400 truncate mt-0.5 font-medium pl-1">${escapeHtml(names)}</div>` : ''}
+                  <div class="text-xs text-slate-400 flex flex-wrap gap-2.5 mt-1 pl-1 font-medium">
+                    <span class="text-emerald-400 font-bold">${Math.round(num(meal.totals?.calories))} kcal</span>
                     <span class="text-carbs">C: ${round1(meal.totals?.carbs_g)}g</span>
                     <span class="text-protein">P: ${round1(meal.totals?.protein_g)}g</span>
                     <span class="text-fat">G: ${round1(meal.totals?.fat_g)}g</span>
                   </div>
                 </div>
-                <button onclick="repeatMeal('${meal.id}')" class="text-slate-500 hover:text-emerald-400 p-1 text-sm active:scale-90" title="${isToday ? 'Aggiungi di nuovo' : 'Aggiungi a oggi'}">↻</button>
-                <button onclick="deleteMeal('${meal.id}')" class="text-slate-600 hover:text-rose-400 p-1 text-sm active:scale-90" title="Elimina">✕</button>
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <button onclick="repeatMeal('${meal.id}')" class="w-9 h-9 bubble-btn bg-slate-800/90 hover:bg-slate-700 active:scale-90 text-slate-300 hover:text-emerald-400 flex items-center justify-center text-base border border-slate-700/60 shadow-sm" title="${isToday ? 'Aggiungi di nuovo' : 'Aggiungi a oggi'}">↻</button>
+                  <button onclick="deleteMeal('${meal.id}')" class="w-9 h-9 bubble-btn bg-slate-800/90 hover:bg-rose-500/20 hover:border-rose-500/40 active:scale-90 text-slate-400 hover:text-rose-400 flex items-center justify-center text-sm font-bold border border-slate-700/60 shadow-sm" title="Elimina">✕</button>
+                </div>
               </div>`;
           }).join('');
         }
 
         const card = document.createElement('div');
-        card.className = 'bg-slate-900/70 border border-slate-800/80 rounded-2xl p-4';
+        card.className = 'bubble-card bg-slate-900/80 border border-slate-800/90 p-4 sm:p-5 shadow-lg';
         card.innerHTML = `
-          <div class="flex items-center justify-between mb-2">
-            <div class="flex items-center gap-2">
-              <span class="text-lg">${cat.icon}</span>
-              <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wide">${cat.label}</h3>
+          <div class="flex items-center justify-between mb-2.5">
+            <div class="flex items-center gap-2.5">
+              <span class="text-2xl">${cat.icon}</span>
+              <h3 class="text-xs sm:text-sm font-black text-slate-200 uppercase tracking-wider">${cat.label}</h3>
             </div>
-            <div class="flex items-center gap-2">
-              <span class="text-xs font-bold ${catCalories > 0 ? 'text-emerald-400' : 'text-slate-500'}">${catCalories} kcal</span>
-              <button onclick="quickAddMealForType('${cat.id}')" class="w-6 h-6 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-300 text-xs font-bold active:scale-90">+</button>
+            <div class="flex items-center gap-2.5">
+              <span class="text-xs sm:text-sm font-black px-2.5 py-1 rounded-full ${catCalories > 0 ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30' : 'bg-slate-800/60 text-slate-500'}">${catCalories} kcal</span>
+              <button onclick="quickAddMealForType('${cat.id}')" class="w-8 h-8 bubble-btn bg-emerald-500 hover:bg-emerald-400 text-slate-950 flex items-center justify-center text-base font-black active:scale-90 shadow-md" aria-label="Aggiungi ${cat.label}">+</button>
             </div>
           </div>
           <div class="space-y-1">${itemsHtml}</div>`;
@@ -1364,9 +1399,9 @@ Rispondi SOLO con JSON valido:
       section.classList.toggle('hidden', list.length === 0);
       container.innerHTML = list.map(g => `
         <button type="button" onclick="addFrequentMeal('${g.latest.id}')"
-          class="shrink-0 max-w-[160px] text-left bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-2xl px-3 py-2 active:scale-95 transition">
-          <p class="text-[11px] font-bold text-slate-100 truncate">${escapeHtml(mealTitle(g.latest))}</p>
-          <p class="text-[10px] text-slate-400">${Math.round(num(g.latest.totals?.calories))} kcal · ${g.count}×</p>
+          class="shrink-0 max-w-[170px] text-left bg-slate-800 hover:bg-slate-700/90 border border-slate-700/80 rounded-2xl px-3.5 py-2.5 bubble-btn active:scale-95 transition shadow-sm">
+          <p class="text-xs font-extrabold text-slate-100 truncate">${escapeHtml(mealTitle(g.latest))}</p>
+          <p class="text-xs text-slate-400 font-medium mt-0.5">${Math.round(num(g.latest.totals?.calories))} kcal · <span class="text-emerald-400 font-bold">${g.count}×</span></p>
         </button>`).join('');
     }
 
@@ -1398,15 +1433,15 @@ Rispondi SOLO con JSON valido:
       statsRange = n;
       document.querySelectorAll('.stats-range-btn').forEach(btn => {
         const active = Number(btn.dataset.range) === n;
-        btn.className = 'stats-range-btn py-2 rounded-2xl text-xs font-bold border ' +
-          (active ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400' : 'bg-slate-800 border-slate-700 text-slate-300');
+        btn.className = 'stats-range-btn py-2.5 bubble-btn text-xs sm:text-sm font-extrabold border transition shadow-sm ' +
+          (active ? 'bg-emerald-500/25 border-emerald-400 text-emerald-300 shadow-emerald-500/20 shadow-md ring-1 ring-emerald-400/50' : 'bg-slate-800/90 border-slate-700/80 text-slate-300 hover:bg-slate-700/90');
       });
       renderStats();
     }
 
     function statCard(title, inner) {
-      return `<section class="bg-slate-900/70 border border-slate-800 rounded-3xl p-4 space-y-3">
-        <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">${title}</h4>${inner}</section>`;
+      return `<section class="bubble-card bg-slate-900/80 border border-slate-800/90 p-5 space-y-3.5 shadow-lg">
+        <h4 class="text-xs font-black text-slate-300 uppercase tracking-wider">${title}</h4>${inner}</section>`;
     }
 
     function renderStats() {
@@ -1466,14 +1501,14 @@ Rispondi SOLO con JSON valido:
 
       let html = '';
 
-      // --- Riepilogo rapido
-      html += `<div class="grid grid-cols-3 gap-2.5">
-        <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-3 text-center">
-          <p class="text-xl font-extrabold text-white">${Math.round(avg.cal)}</p><p class="text-[10px] text-slate-400">kcal medie/giorno</p></div>
-        <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-3 text-center">
-          <p class="text-xl font-extrabold text-emerald-400">${Math.round(inTarget / n * 100)}%</p><p class="text-[10px] text-slate-400">giorni in obiettivo</p></div>
-        <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-3 text-center">
-          <p class="text-xl font-extrabold text-amber-400">${streak}🔥</p><p class="text-[10px] text-slate-400">giorni di fila</p></div>
+      // --- Riepilogo rapido Bubble Cards
+      html += `<div class="grid grid-cols-3 gap-3">
+        <div class="bubble-card bg-slate-900/80 border border-slate-800/90 p-4 text-center shadow-md">
+          <p class="text-2xl font-black text-white">${Math.round(avg.cal)}</p><p class="text-xs font-semibold text-slate-400 mt-1">kcal medie</p></div>
+        <div class="bubble-card bg-slate-900/80 border border-slate-800/90 p-4 text-center shadow-md">
+          <p class="text-2xl font-black text-emerald-400">${Math.round(inTarget / n * 100)}%</p><p class="text-xs font-semibold text-slate-400 mt-1">in obiettivo</p></div>
+        <div class="bubble-card bg-slate-900/80 border border-slate-800/90 p-4 text-center shadow-md">
+          <p class="text-2xl font-black text-amber-400">${streak}🔥</p><p class="text-xs font-semibold text-slate-400 mt-1">di fila</p></div>
       </div>`;
 
       // --- Grafico calorie giornaliere con linea obiettivo
@@ -1481,39 +1516,39 @@ Rispondi SOLO con JSON valido:
       const targetPos = (T.calories / maxVal) * 100;
       const labelEvery = statsRange <= 7 ? 1 : statsRange <= 30 ? 5 : 15;
       const bars = dayStats.map((d, i) => {
-        const h = d.cal > 0 ? Math.max(2, (d.cal / maxVal) * 100) : 0;
-        const color = d.cal === 0 ? 'bg-slate-800' : d.cal > T.calories * 1.1 ? 'bg-rose-500' : d.cal >= T.calories * 0.9 ? 'bg-emerald-500' : 'bg-sky-500';
+        const h = d.cal > 0 ? Math.max(3, (d.cal / maxVal) * 100) : 0;
+        const color = d.cal === 0 ? 'bg-slate-800/80' : d.cal > T.calories * 1.1 ? 'bg-rose-500' : d.cal >= T.calories * 0.9 ? 'bg-emerald-500' : 'bg-sky-500';
         const dt = dayKeyToDate(d.key);
         const lbl = statsRange <= 7
           ? dt.toLocaleDateString('it-IT', { weekday: 'narrow' }).toUpperCase()
           : ((statsRange - 1 - i) % labelEvery === 0 ? String(dt.getDate()) : '');
         return `<div class="flex-1 flex flex-col items-center h-full min-w-0" title="${d.key}: ${Math.round(d.cal)} kcal">
-          <div class="flex-1 w-full flex items-end"><div class="w-full ${color} rounded-t-sm" style="height:${h}%"></div></div>
-          <span class="text-[8px] text-slate-500 h-3 leading-3 mt-1 whitespace-nowrap">${lbl}</span></div>`;
+          <div class="flex-1 w-full flex items-end"><div class="w-full ${color} rounded-t-md shadow-sm" style="height:${h}%"></div></div>
+          <span class="text-xs text-slate-400 font-bold h-4 leading-4 mt-1.5 whitespace-nowrap">${lbl}</span></div>`;
       }).join('');
       html += statCard(`Calorie giornaliere · ultimi ${statsRange} giorni`, `
-        <div class="relative h-44">
-          <div class="absolute left-0 right-0 top-0 pointer-events-none z-10" style="bottom:16px">
-            <div class="absolute left-0 right-0 border-t border-dashed border-amber-400/80" style="bottom:${targetPos}%">
-              <span class="absolute right-0 -top-4 text-[9px] text-amber-400 font-bold bg-slate-900/80 px-1 rounded">obiettivo ${T.calories}</span>
+        <div class="relative h-48 pt-2">
+          <div class="absolute left-0 right-0 top-0 pointer-events-none z-10" style="bottom:20px">
+            <div class="absolute left-0 right-0 border-t-2 border-dashed border-amber-400/80" style="bottom:${targetPos}%">
+              <span class="absolute right-0 -top-4 text-xs text-amber-400 font-black bg-slate-900/90 px-2 py-0.5 rounded-full border border-amber-400/30">obiettivo ${T.calories}</span>
             </div>
           </div>
-          <div class="flex ${statsRange > 30 ? 'gap-px' : 'gap-1'} h-full">${bars}</div>
+          <div class="flex ${statsRange > 30 ? 'gap-1' : 'gap-1.5'} h-full">${bars}</div>
         </div>
-        <div class="flex flex-wrap gap-3 text-[10px] text-slate-400">
-          <span><span class="inline-block w-2 h-2 rounded-sm bg-emerald-500"></span> in obiettivo (±10%): ${inTarget}</span>
-          <span><span class="inline-block w-2 h-2 rounded-sm bg-sky-500"></span> sotto: ${under}</span>
-          <span><span class="inline-block w-2 h-2 rounded-sm bg-rose-500"></span> sopra: ${over}</span>
+        <div class="flex flex-wrap gap-3.5 text-xs text-slate-300 font-medium pt-2 border-t border-slate-800/60">
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> in obiettivo: ${inTarget}</span>
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span> sotto: ${under}</span>
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> sopra: ${over}</span>
         </div>`);
 
       // --- Medie macronutrienti vs obiettivo
       const macroRow = (label, val, target, cls) => {
         const pct = target > 0 ? Math.round(val / target * 100) : 0;
-        return `<div><div class="flex justify-between text-[11px] mb-1"><span class="${cls} font-semibold">${label}</span>
-          <span class="text-slate-300">${Math.round(val)}g <span class="text-slate-500">/ ${target}g (${pct}%)</span></span></div>
-          <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden"><div class="h-full rounded-full ${cls.replace('text-', 'bg-')}" style="width:${Math.min(pct, 100)}%"></div></div></div>`;
+        return `<div><div class="flex justify-between text-xs sm:text-sm mb-1.5"><span class="${cls} font-bold">${label}</span>
+          <span class="text-slate-200 font-bold">${Math.round(val)}g <span class="text-slate-400 font-normal">/ ${target}g (${pct}%)</span></span></div>
+          <div class="w-full bg-slate-800/90 h-2.5 rounded-full overflow-hidden shadow-inner"><div class="h-full rounded-full ${cls.replace('text-', 'bg-')}" style="width:${Math.min(pct, 100)}%"></div></div></div>`;
       };
-      html += statCard('Media macronutrienti giornaliera', `<div class="space-y-3">
+      html += statCard('Media macronutrienti giornaliera', `<div class="space-y-3.5">
         ${macroRow('Carboidrati', avg.carbs, T.carbs, 'text-carbs')}
         ${macroRow('Proteine', avg.protein, T.protein, 'text-protein')}
         ${macroRow('Grassi', avg.fat, T.fat, 'text-fat')}</div>`);
@@ -1522,10 +1557,10 @@ Rispondi SOLO con JSON valido:
       const eC = avg.carbs * 4, eP = avg.protein * 4, eF = avg.fat * 9, eT = eC + eP + eF || 1;
       const pC = Math.round(eC / eT * 100), pP = Math.round(eP / eT * 100), pF = Math.max(0, 100 - pC - pP);
       html += statCard('Da dove arrivano le calorie', `
-        <div class="flex h-4 rounded-full overflow-hidden">
+        <div class="flex h-5 rounded-full overflow-hidden shadow-inner">
           <div class="bg-carbs" style="width:${pC}%"></div><div class="bg-protein" style="width:${pP}%"></div><div class="bg-fat" style="width:${pF}%"></div>
         </div>
-        <div class="flex justify-between text-[11px]">
+        <div class="flex justify-between text-xs sm:text-sm font-bold pt-1">
           <span class="text-carbs">Carbo ${pC}%</span><span class="text-protein">Proteine ${pP}%</span><span class="text-fat">Grassi ${pF}%</span>
         </div>`);
 
@@ -1537,15 +1572,15 @@ Rispondi SOLO con JSON valido:
       const catTotal = Object.values(catCal).reduce((a, b) => a + b, 0) || 1;
       const catColors = { colazione: 'bg-amber-400', pranzo: 'bg-emerald-500', spuntino: 'bg-fuchsia-500', cena: 'bg-indigo-500' };
       html += statCard('Calorie per tipo di pasto', `
-        <div class="flex h-4 rounded-full overflow-hidden">
+        <div class="flex h-5 rounded-full overflow-hidden shadow-inner">
           ${MEAL_CATEGORIES.map(c => `<div class="${catColors[c.id]}" style="width:${catCal[c.id] / catTotal * 100}%"></div>`).join('')}
         </div>
-        <div class="grid grid-cols-2 gap-2">
-          ${MEAL_CATEGORIES.map(c => `<div class="flex items-center justify-between bg-slate-950/50 rounded-xl px-3 py-2 text-[11px]">
-            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm ${catColors[c.id]}"></span>${c.icon} ${c.label}</span>
-            <span class="text-slate-300 font-semibold">${Math.round(catCal[c.id] / catTotal * 100)}% · ${Math.round(catCal[c.id] / n)} kcal</span></div>`).join('')}
+        <div class="grid grid-cols-2 gap-2.5 pt-1">
+          ${MEAL_CATEGORIES.map(c => `<div class="flex items-center justify-between bg-slate-950/60 rounded-2xl px-3.5 py-2.5 text-xs border border-slate-800/80">
+            <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full ${catColors[c.id]}"></span>${c.icon} <span class="font-bold text-slate-200">${c.label}</span></span>
+            <span class="text-slate-300 font-extrabold">${Math.round(catCal[c.id] / catTotal * 100)}% · ${Math.round(catCal[c.id] / n)} kcal</span></div>`).join('')}
         </div>
-        <p class="text-[10px] text-slate-500">kcal = media per giorno registrato</p>`);
+        <p class="text-xs text-slate-400">kcal = media per giorno registrato</p>`);
 
       // --- Piatti più frequenti
       const dishMap = new Map();
@@ -1556,10 +1591,10 @@ Rispondi SOLO con JSON valido:
         dishMap.set(k, g);
       });
       const topDishes = [...dishMap.values()].sort((a, b) => b.count - a.count).slice(0, 5);
-      html += statCard('Piatti più frequenti', `<div class="space-y-1.5">
-        ${topDishes.map((d, i) => `<div class="flex items-center justify-between text-xs py-1 border-b border-slate-800/60 last:border-0">
-          <span class="truncate pr-2"><span class="text-slate-500 mr-1">${i + 1}.</span>${escapeHtml(d.name)}</span>
-          <span class="shrink-0 text-slate-400">${d.count}× · ~${Math.round(d.cal / d.count)} kcal</span></div>`).join('')}</div>`);
+      html += statCard('Piatti più frequenti', `<div class="space-y-2">
+        ${topDishes.map((d, i) => `<div class="flex items-center justify-between text-sm py-1.5 border-b border-slate-800/60 last:border-0">
+          <span class="truncate pr-2 font-medium text-slate-200"><span class="text-emerald-400 font-bold mr-1.5">${i + 1}.</span>${escapeHtml(d.name)}</span>
+          <span class="shrink-0 text-slate-300 font-bold">${d.count}× · <span class="text-emerald-400">~${Math.round(d.cal / d.count)} kcal</span></span></div>`).join('')}</div>`);
 
       // --- Alimenti più consumati
       const foodMap = new Map();
@@ -1570,10 +1605,10 @@ Rispondi SOLO con JSON valido:
         foodMap.set(k, g);
       }));
       const topFoods = [...foodMap.values()].sort((a, b) => b.count - a.count).slice(0, 8);
-      html += statCard('Alimenti più consumati', `<div class="flex flex-wrap gap-1.5">
-        ${topFoods.map(f => `<span class="text-[11px] bg-slate-800 border border-slate-700 rounded-full px-2.5 py-1 text-slate-200">${escapeHtml(f.name)} <span class="text-slate-500">${f.count}× · ${Math.round(f.grams / 1000 * 10) / 10} kg</span></span>`).join('')}</div>`);
+      html += statCard('Alimenti più consumati', `<div class="flex flex-wrap gap-2">
+        ${topFoods.map(f => `<span class="text-xs font-bold bg-slate-800/90 border border-slate-700/80 rounded-full px-3 py-1.5 text-slate-200 shadow-sm">${escapeHtml(f.name)} <span class="text-slate-400 font-medium">${f.count}× · ${Math.round(f.grams / 1000 * 10) / 10} kg</span></span>`).join('')}</div>`);
 
-      html += `<p class="text-center text-[10px] text-slate-600 pb-4">Medie calcolate su ${n} giorni con almeno un pasto registrato.</p>`;
+      html += `<p class="text-center text-xs text-slate-500 pb-4">Medie calcolate su ${n} giorni con almeno un pasto registrato.</p>`;
       out.innerHTML = html;
     }
 
@@ -1706,8 +1741,8 @@ Rispondi SOLO con JSON valido:
       currentScanState.mealType = type;
       document.querySelectorAll('.meal-type-btn').forEach(btn => {
         const active = btn.dataset.type === type;
-        btn.className = 'meal-type-btn py-2.5 rounded-2xl text-xs font-bold border transition ' +
-          (active ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400' : 'bg-slate-800 border-slate-700 text-slate-300');
+        btn.className = 'meal-type-btn py-3 bubble-btn text-xs sm:text-sm font-extrabold border transition shadow-sm ' +
+          (active ? 'bg-emerald-500/25 border-emerald-400 text-emerald-300 shadow-emerald-500/20 shadow-md ring-1 ring-emerald-400/50' : 'bg-slate-800/90 border-slate-700/80 text-slate-300 hover:bg-slate-700/90');
       });
     }
 
@@ -1793,7 +1828,7 @@ Rispondi SOLO con JSON valido:
             lines.push(`<p class="text-slate-300">${i + 1}. ${escapeHtml(m)} · ${tag}</p>`);
           });
           if (Object.keys(modelStats).length) {
-            lines.push('<button type="button" onclick="resetModelStats()" class="mt-1 text-[11px] text-sky-400 underline">Azzera statistiche velocità</button>');
+            lines.push('<button type="button" onclick="resetModelStats()" class="mt-1 text-xs font-semibold text-sky-400 hover:text-sky-300 underline">Azzera statistiche velocità</button>');
           }
         } catch (e) {
           lines.push(`<p class="text-rose-400">✕ ${escapeHtml(e.message)}</p>`);
