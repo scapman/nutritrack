@@ -37,19 +37,28 @@
     ::-webkit-scrollbar { display: none; }
     * { -webkit-tap-highlight-color: transparent; }
 
-    /* Sfondo a tema Nutrizione & Benessere (organico, bio, gradienti mesh e pattern foglie) */
+    /* Sfondo a tema Nutrizione & Benessere (organico, bio, gradienti mesh e pattern botanico ben visibile) */
     body {
-      background-color: #060a11;
+      background-color: #060e14 !important;
       background-image: 
-        /* Glow organico verde naturale in alto a destra */
-        radial-gradient(circle at 90% 12%, rgba(16, 185, 129, 0.14) 0%, transparent 45%),
-        /* Glow energizzante lime/menta al centro a sinistra */
-        radial-gradient(circle at 10% 45%, rgba(52, 211, 153, 0.10) 0%, transparent 40%),
-        /* Glow ambrato/caldo in basso a destra per equilibrio nutrizionale */
-        radial-gradient(circle at 85% 85%, rgba(245, 158, 11, 0.08) 0%, transparent 45%),
-        /* Pattern discreto e raffinato a tema botanico / foglie nutrizionali in SVG data URI */
-        url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2310b981' fill-opacity='0.025' fill-rule='evenodd'%3E%3Cpath d='M20 15c4-6 12-8 18-4-1 6-5 12-11 14-4 1-7-4-7-10zm40 40c4-6 12-8 18-4-1 6-5 12-11 14-4 1-7-4-7-10zM15 65c-2-5 1-11 6-13 4 3 6 8 4 13-2 3-8 3-10 0zm45-45c-2-5 1-11 6-13 4 3 6 8 4 13-2 3-8 3-10 0z'/%3E%3C/g%3E%3C/svg%3E");
-      background-attachment: fixed;
+        /* Glow organico smeraldo fresco in alto a destra */
+        radial-gradient(circle at 90% 10%, rgba(16, 185, 129, 0.28) 0%, transparent 55%),
+        /* Glow energizzante menta/lime al centro a sinistra */
+        radial-gradient(circle at 10% 50%, rgba(52, 211, 153, 0.22) 0%, transparent 50%),
+        /* Glow ambrato/miele in basso a destra per le calorie */
+        radial-gradient(circle at 85% 85%, rgba(245, 158, 11, 0.16) 0%, transparent 55%),
+        /* Pattern botanico a foglie bio nitido e ben distinguibile */
+        url("data:image/svg+xml,%3Csvg width='72' height='72' viewBox='0 0 72 72' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2310b981' fill-opacity='0.08' fill-rule='evenodd'%3E%3Cpath d='M18 12c5-7 14-9 20-4-1 7-6 14-13 16-5 1-8-4-7-12zm36 36c5-7 14-9 20-4-1 7-6 14-13 16-5 1-8-4-7-12zM12 56c-2-6 1-12 7-14 5 3 7 9 4 15-2 3-8 3-11-1zm36-36c-2-6 1-12 7-14 5 3 7 9 4 15-2 3-8 3-11-1z'/%3E%3C/g%3E%3C/svg%3E") !important;
+      background-attachment: fixed !important;
+      background-repeat: repeat !important;
+    }
+
+    /* Rendi i contenitori semitrasparenti per far risaltare il pattern nutrizionale */
+    .bubble-card {
+      border-radius: 1.75rem;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), inset 0 1px 1px 0 rgba(255, 255, 255, 0.08);
     }
 
     /* Bubble Design System: forme organiche e tattili */
@@ -71,7 +80,7 @@
     }
   </style>
 </head>
-<body class="h-full flex flex-col font-sans select-none overflow-hidden bg-slate-950 text-slate-100">
+<body class="h-full flex flex-col font-sans select-none overflow-hidden text-slate-100">
 
   <!-- ================= NOTIFICHE TOAST ================= -->
   <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-[60] transition-all duration-300 opacity-0 pointer-events-none transform -translate-y-4 max-w-[90%] w-auto px-4 py-3 rounded-2xl shadow-2xl backdrop-blur-md text-sm font-medium border flex items-center gap-2">
