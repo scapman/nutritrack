@@ -2,7 +2,7 @@
    - index.html: "network first" (prendi sempre l'ultima versione, offline usa la copia salvata)
    - Tailwind CDN, icone, manifest: "cache first" (l'app si apre anche senza connessione)
    - Le chiamate alle API Gemini NON vengono mai salvate in cache */
-const CACHE = 'nutritrack-v5-foodbg';
+const CACHE = 'nutritrack-v6-voice-text';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', (event) => {

@@ -54,7 +54,7 @@
     /* Sezioni trasparenti in stile Liquid Glass: lasciano vedere completamente il cibo */
     .bubble-card {
       border-radius: 1.75rem;
-      background: rgba(11, 23, 31, 0.28) !important;
+      background: rgba(11, 23, 31, 0.22) !important;
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.16) !important;
@@ -78,6 +78,17 @@
     /* Testi ad alta leggibilità con sottile ombra scura su sfondo fotografico */
     .text-shadow-sm {
       text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+    }
+    /* Animazione microfono vocale attivo */
+    @keyframes pulse-mic {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      50% { transform: scale(1.08); box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+    }
+    .mic-recording {
+      animation: pulse-mic 1.4s infinite;
+      background-color: #ef4444 !important;
+      border-color: #f87171 !important;
+      color: #ffffff !important;
     }
   </style>
 </head>
@@ -260,11 +271,31 @@
         <div id="frequent-meals-list" class="flex gap-2.5 overflow-x-auto pb-2 -mx-1 px-1"></div>
       </div>
 
+      <!-- Inserimento rapido testuale o vocale (senza foto) -->
+      <div class="bg-black/25 backdrop-blur-sm rounded-3xl p-4 border border-white/15 space-y-2.5">
+        <div class="flex items-center justify-between">
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider">✍️ Descrivi o detta il pasto (senza foto)</label>
+          <span class="text-xs text-emerald-400 font-semibold">oppure usa la foto sotto</span>
+        </div>
+        <div class="relative flex items-center">
+          <input type="text" id="meal-text-input" placeholder="es. 100g pasta al pesto, 1 mela, 1 fetta di pane..." class="w-full bg-slate-950/80 border border-slate-700/80 rounded-2xl pl-4 pr-14 py-3.5 text-base font-semibold text-white placeholder-slate-400 focus:outline-none focus:border-emerald-400 shadow-inner">
+          <button type="button" id="mic-text-btn" onclick="toggleVoiceInput('meal-text-input', 'mic-text-btn')" class="absolute right-2 w-10 h-10 bubble-btn bg-slate-800 hover:bg-slate-700 text-emerald-400 flex items-center justify-center text-lg border border-slate-700/80 shadow-sm" title="Dettatura vocale">🎙️</button>
+        </div>
+        <p class="text-xs text-slate-400">Puoi scrivere o premere il microfono 🎙️ per dettare ciò che hai mangiato.</p>
+      </div>
+
+      <!-- Divisore oppure foto -->
+      <div class="flex items-center gap-3">
+        <div class="flex-1 h-px bg-slate-800/80"></div>
+        <span class="text-xs font-extrabold uppercase tracking-widest text-slate-400">oppure con foto</span>
+        <div class="flex-1 h-px bg-slate-800/80"></div>
+      </div>
+
       <!-- Area Selezione / Anteprima Immagine -->
-      <div id="image-dropzone" class="border-2 border-dashed border-slate-700/80 rounded-3xl p-5 text-center cursor-pointer relative bg-slate-950/50 min-h-[190px] flex flex-col items-center justify-center overflow-hidden transition hover:border-emerald-500/60 shadow-inner">
+      <div id="image-dropzone" class="border-2 border-dashed border-slate-700/80 rounded-3xl p-5 text-center cursor-pointer relative bg-black/20 min-h-[170px] flex flex-col items-center justify-center overflow-hidden transition hover:border-emerald-500/60 shadow-inner">
         <img id="image-preview" class="hidden absolute inset-0 w-full h-full object-cover rounded-3xl" alt="Anteprima">
         <div id="image-placeholder" class="space-y-3">
-          <div class="w-14 h-14 mx-auto bubble-btn bg-slate-800 text-emerald-400 flex items-center justify-center border border-slate-700/80 shadow-md">
+          <div class="w-14 h-14 mx-auto bubble-btn bg-slate-800/90 text-emerald-400 flex items-center justify-center border border-slate-700/80 shadow-md">
             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
           </div>
           <p class="text-sm font-semibold text-slate-200">Tocca per scattare una foto o caricarla</p>
@@ -277,9 +308,12 @@
       </div>
 
       <!-- Note opzionali per migliorare la stima -->
-      <div>
-        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Note (opzionale)</label>
-        <input type="text" id="meal-notes" placeholder="es. pasta integrale, 1 cucchiaio d'olio, porzione abbondante" class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 shadow-inner">
+      <div id="notes-container">
+        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Note aggiuntive sulla foto (opzionale)</label>
+        <div class="relative flex items-center">
+          <input type="text" id="meal-notes" placeholder="es. pasta integrale, 1 cucchiaio d'olio, porzione abbondante" class="w-full bg-slate-950/80 border border-slate-800 rounded-2xl pl-4 pr-12 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 shadow-inner">
+          <button type="button" id="mic-notes-btn" onclick="toggleVoiceInput('meal-notes', 'mic-notes-btn')" class="absolute right-2 w-9 h-9 bubble-btn bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm border border-slate-700" title="Dettatura vocale">🎙️</button>
+        </div>
       </div>
 
       <!-- STATO AVANZAMENTO PIPELINE A 2 FASI -->
@@ -1024,8 +1058,12 @@ Rispondi SOLO con JSON valido:
         openSettingsModal();
         return;
       }
-      if (!currentScanState.imageBase64) {
-        showToast('Scatta o seleziona prima una foto del cibo', 'error');
+
+      const textDesc = document.getElementById('meal-text-input')?.value.trim() || '';
+      const hasPhoto = !!currentScanState.imageBase64;
+
+      if (!hasPhoto && !textDesc) {
+        showToast('Scatta una foto, oppure scrivi/detta a voce ciò che hai mangiato.', 'error');
         return;
       }
 
@@ -1041,17 +1079,24 @@ Rispondi SOLO con JSON valido:
 
       let phase = 1;
       try {
-        // FASE 1: visione -> nome piatto + pesi
-        const vision = await runVisionPhase(document.getElementById('meal-notes').value.trim());
-        currentScanState.geminiResult = vision.foods;
-        setStep(1, 'done', `✓ ${vision.foods.length} alimenti · ${vision.model}`);
+        let recognized;
+        if (hasPhoto) {
+          // Modalità FOTO (con eventuali note)
+          recognized = await runVisionPhase(document.getElementById('meal-notes').value.trim());
+        } else {
+          // Modalità DIGITAZIONE o VOCE
+          recognized = await runTextNutritionPhase(textDesc);
+        }
+
+        currentScanState.geminiResult = recognized.foods;
+        setStep(1, 'done', `✓ ${recognized.foods.length} alimenti · ${recognized.model}`);
 
         // FASE 2: pesi -> calorie e macro (database locale + Gemini per i nuovi)
         phase = 2;
         setStep(2, 'running', 'Ricerca nel database locale...');
-        const nutrition = await runNutritionPhase(vision.foods);
+        const nutrition = await runNutritionPhase(recognized.foods);
         currentScanState.nutritionResult = {
-          dishName: vision.dishName,
+          dishName: recognized.dishName,
           items: nutrition.items,
           totals: nutrition.totals
         };
@@ -1111,7 +1156,7 @@ Rispondi SOLO con JSON valido:
       document.getElementById('pipeline-error-text').textContent = '';
     }
 
-    /* Risultato con nome del piatto e grammi modificabili (ricalcolo istantaneo, senza API) */
+    /* Risultato con nome piatto, alimenti e grammi modificabili sia con testo che con voce */
     function displayAnalysisResults() {
       const data = currentScanState.nutritionResult;
       document.getElementById('result-dish-name').value = data.dishName || '';
@@ -1120,31 +1165,86 @@ Rispondi SOLO con JSON valido:
       container.innerHTML = '';
       data.items.forEach((item, idx) => {
         const row = document.createElement('div');
-        row.className = 'flex items-center justify-between gap-2 py-1.5 border-b border-slate-900';
+        row.className = 'bg-black/20 rounded-2xl p-3 border border-white/10 space-y-2';
         row.innerHTML = `
-          <div class="min-w-0 flex-1">
-            <div class="flex items-center gap-2">
-              <span class="font-bold text-slate-100 text-sm truncate">${escapeHtml(item.name)}</span>
-              <span class="text-xs px-2 py-0.5 rounded-full font-bold ${item.source === 'db' ? 'bg-sky-500/20 text-sky-300 border border-sky-500/30' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'}">${item.source === 'db' ? 'DB' : 'AI'}</span>
+          <div class="flex items-center gap-2">
+            <div class="relative flex-1">
+              <input type="text" id="item-name-${idx}" value="${escapeHtml(item.name)}" 
+                onchange="updateResultFoodName(${idx}, this.value)"
+                class="w-full bg-slate-950/80 border border-slate-700/80 rounded-xl pl-3 pr-10 py-2 text-sm font-bold text-white focus:outline-none focus:border-emerald-400 shadow-inner">
+              <button type="button" id="mic-item-${idx}" onclick="toggleVoiceInput('item-name-${idx}', 'mic-item-${idx}')" 
+                class="absolute right-1.5 top-1.5 w-7 h-7 bubble-btn bg-slate-800 text-slate-300 hover:text-emerald-400 flex items-center justify-center text-xs" title="Correggi con voce">🎙️</button>
             </div>
-            <div class="text-slate-400 text-xs font-medium mt-0.5">C:${item.carbs_g}g · P:${item.protein_g}g · G:${item.fat_g}g</div>
+            <span class="text-xs px-2.5 py-1 rounded-full font-extrabold shrink-0 ${item.source === 'db' ? 'bg-sky-500/20 text-sky-300 border border-sky-500/30' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'}">${item.source === 'db' ? 'DB' : 'AI'}</span>
           </div>
-          <div class="flex items-center gap-1.5 shrink-0">
-            <input type="number" inputmode="numeric" min="0" value="${item.weight_g}" onchange="updateResultWeight(${idx}, this.value)"
-              class="w-20 bg-slate-900 border border-slate-700/80 rounded-xl px-2.5 py-1.5 text-sm font-extrabold text-white text-right focus:outline-none focus:border-emerald-500 shadow-inner">
-            <span class="text-xs font-bold text-slate-400">g</span>
-          </div>
-          <span class="w-16 text-right text-emerald-400 font-black text-sm shrink-0">${item.calories} <span class="text-xs font-normal text-slate-400">kcal</span></span>`;
+          <div class="flex items-center justify-between text-xs text-slate-300 pt-1">
+            <div class="flex items-center gap-1.5">
+              <span class="text-slate-400 font-medium">Peso:</span>
+              <input type="number" inputmode="numeric" min="0" value="${item.weight_g}" onchange="updateResultWeight(${idx}, this.value)"
+                class="w-20 bg-slate-900 border border-slate-700/80 rounded-xl px-2.5 py-1 text-sm font-extrabold text-white text-right focus:outline-none focus:border-emerald-500 shadow-inner">
+              <span class="font-bold text-slate-400">g</span>
+            </div>
+            <div class="text-right">
+              <span class="text-emerald-400 font-black text-sm">${item.calories} kcal</span>
+              <span class="text-slate-400 text-xs ml-1 font-medium">(C:${item.carbs_g} P:${item.protein_g} G:${item.fat_g})</span>
+            </div>
+          </div>`;
         container.appendChild(row);
       });
 
       const t = data.totals;
       document.getElementById('result-total-macros').innerHTML = `
         <span class="text-emerald-400">${t.calories} kcal</span> |
-        <span class="text-carbs">C:${t.carbs_g}g</span>
-        <span class="text-protein">P:${t.protein_g}g</span>
+        <span class="text-carbs">C:${t.carbs_g}g</span> 
+        <span class="text-protein">P:${t.protein_g}g</span> 
         <span class="text-fat">G:${t.fat_g}g</span>`;
       document.getElementById('analysis-result').classList.remove('hidden');
+    }
+
+    /* Modifica del nome dell'alimento (es. da coniglio a pollo): ricalcolo immediato da DB o da Gemini */
+    async function updateResultFoodName(idx, newName) {
+      const data = currentScanState.nutritionResult;
+      if (!data || !data.items[idx]) return;
+      const cleanName = String(newName || '').trim();
+      if (!cleanName) return;
+
+      const oldItem = data.items[idx];
+      if (foodKey(cleanName) === foodKey(oldItem.name)) return;
+
+      showToast(`Ricalcolo valori per "${cleanName}"...`, 'info');
+
+      try {
+        let per100 = lookupFood(cleanName);
+        let source = 'db';
+
+        // Se non è nel DB locale, chiedi a Gemini solo per questo nuovo alimento
+        if (!per100) {
+          const prompt = `Sei un nutrizionista clinico. Fornisci i valori nutrizionali medi PER 100 GRAMMI per questo alimento: "${cleanName}".
+Rispondi SOLO con JSON valido:
+{"name":"${cleanName}","kcal_100g":130,"carbs_100g":0,"protein_100g":27,"fat_100g":2.5}`;
+
+          const res = await callGemini([{ text: prompt }], 2, 0.1, 35000);
+          const val = res.json;
+          per100 = {
+            name: cleanName,
+            kcal_100g: round1(val.kcal_100g ?? val.calories_100g ?? val.kcal ?? 100),
+            carbs_100g: round1(val.carbs_100g ?? val.carbs ?? 0),
+            protein_100g: round1(val.protein_100g ?? val.protein ?? 0),
+            fat_100g: round1(val.fat_100g ?? val.fat ?? 0),
+            source: res.model
+          };
+          storeFood(per100);
+          source = 'ai';
+        }
+
+        data.items[idx] = computeItem(cleanName, oldItem.weight_g, per100, source);
+        data.totals = sumTotals(data.items);
+        displayAnalysisResults();
+        showToast(`Aggiornato a "${cleanName}"!`, 'success');
+      } catch (err) {
+        console.error('Error updating food name:', err);
+        showToast('Errore durante il ricalcolo dell\'alimento: ' + err.message, 'error');
+      }
     }
 
     function updateResultWeight(idx, value) {
@@ -1742,6 +1842,8 @@ Rispondi SOLO con JSON valido:
     function closeScanModal() {
       document.getElementById('scan-modal').classList.add('hidden');
       document.getElementById('meal-notes').value = '';
+      const textInput = document.getElementById('meal-text-input');
+      if (textInput) textInput.value = '';
       currentScanState.geminiResult = null;
       currentScanState.nutritionResult = null;
       clearSelectedImage();
